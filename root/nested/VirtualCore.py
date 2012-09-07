@@ -54,24 +54,24 @@ class VirtualCore:
         return False
     
     def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
-        if(valueTuple[1] == ""):
+        if(valueTuple[0] == ""):
             return Instruction("data", [valueTuple])
-        elif(valueTuple[1] == "@"):
-            return self.memmory[(valueTuple[0] + relativePoint)%self.size]
-        elif(valueTuple[1] == "#"):
-            return self.memmory[(self.memmory[(valueTuple[0] + relativePoint)%self.size].values[0][0] + relativePoint)%self.size]
-        elif(valueTuple[1] == "$"):
+        elif(valueTuple[0] == "@"):
+            return self.memmory[(valueTuple[1] + relativePoint)%self.size]
+        elif(valueTuple[0] == "#"):
+            return self.memmory[(self.memmory[(valueTuple[1] + relativePoint)%self.size].values[0][1] + relativePoint)%self.size]
+        elif(valueTuple[0] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
             
     def getLocation(self, valueTuple, relativePoint): #return -1 if not valid
-        if(valueTuple[1] == ""):
+        if(valueTuple[0] == ""):
             return -1
-        elif(valueTuple[1] == "@"):
-            return (valueTuple[0] + relativePoint)%self.size
-        elif(valueTuple[1] == "#"):
-            return (self.memmory[(valueTuple[0] + relativePoint)%self.size].values[0][0] + relativePoint)%self.size
-        elif(valueTuple[1] == "$"):
+        elif(valueTuple[0] == "@"):
+            return (valueTuple[1] + relativePoint)%self.size
+        elif(valueTuple[0] == "#"):
+            return (self.memmory[(valueTuple[1] + relativePoint)%self.size].values[0][1] + relativePoint)%self.size
+        elif(valueTuple[0] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
             
