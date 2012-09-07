@@ -1,0 +1,6 @@
+//Hello this is demo code
+data 23
+data 12
+move @-1 @13
+add @-2 @-3 @-2
+goto @-2
