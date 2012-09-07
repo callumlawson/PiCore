@@ -5,9 +5,7 @@ Created on 7 Sep 2012
 '''
 class Instruction:
     name = "nop"
-    values = []
-    valueMods = []
-    def __init__(self, instructionName = "nop", instructionValues = [0], instructionMods = [""]):
+    values = [(0, "")]
+    def __init__(self, instructionName = "nop", instructionValues = [(0, "")]):
         self.name = instructionName
         self.values = instructionValues
-        self.valueMods = instructionMods

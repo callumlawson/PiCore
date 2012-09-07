@@ -27,3 +27,6 @@ class PlayerProgramCounter:
         self.counters[self.currentCounter] = (self.counters[self.currentCounter] + 1)%memmorySize
     def advanceThread(self):
         self.currentCounter = (self.currentCounter+1)%len(self.counters)
+    def advanceBoth(self, memmorySize):
+        self.advancePointer(memmorySize)
+        self.advanceThread()
