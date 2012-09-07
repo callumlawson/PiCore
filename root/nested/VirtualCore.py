@@ -43,14 +43,14 @@ class VirtualCore:
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
             return False
-        elif(instruction.name == "move"): # move
+        elif(instruction.name == "mov"): # move
             instruction = self.getInstruction(instruction.values[0], instructionLocation)
             location = self.getLocation(instruction.values[1], instructionLocation)
             if(location == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.memmory[location] = instruction
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
-        elif(instruction.name == "jump"): #jump program counter to a point in memmory
+        elif(instruction.name == "jmp"): #jump program counter to a point in memmory
             destination = self.getLocation(instruction.values[0], instructionLocation)
             if(destination == -1):
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
@@ -62,13 +62,21 @@ class VirtualCore:
             location = self.getLocation(instruction.values[2],instructionLocation)
             if(location == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memmory[location] = firstValue.values[0][1] + secondValue.values[0][1]
+            self.memmory[location] = Instruction("dat",["",(firstValue.values[0][1] + secondValue.values[0][1])%self.size])
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+        elif(instruction.name == "sub"): # add
+            firstValue = self.getInstruction(instruction.values[0],instructionLocation)
+            secondValue = self.getInstruction(instruction.values[1],instructionLocation)
+            location = self.getLocation(instruction.values[2],instructionLocation)
+            if(location == -1): #invalid destination, kills thread
+                return self.playerCounters[self.currentPlayer].killCurrentPointer()
+            self.memmory[location] = Instruction("dat",["",(firstValue.values[0][1] - secondValue.values[0][1])%self.size])
+            self.playerCounters[self.currentPlayer].advanceBoth(self.size)    
         return False
     
     def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(valueTuple[0] == ""):
-            return Instruction("data", [valueTuple])
+            return Instruction("dat", [valueTuple])
         elif(valueTuple[0] == "@"):
             return self.memmory[(valueTuple[1] + relativePoint)%self.size]
         elif(valueTuple[0] == "#"):
