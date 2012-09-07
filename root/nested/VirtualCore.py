@@ -8,17 +8,21 @@ import Instruction
 import PlayerProgramCounter
  
 class VirtualCore:
+    
     playerCounters = []
     currentPlayer = 0
     memmory = []
     size = 0
+    
     def __init__(self, memmorySize, players):
         self.playerCounters = [PlayerProgramCounter(i) for i in range(players)]
         self.memmory = [Instruction() for j in range(memmorySize)]
         self.size = memmorySize
+        
     def load(self, position, code):
         codeLength = len(code)
         self.memmory = self.memmory[0:position] + code + self.memmory[(position + codeLength):]
+        
     def tick(self): #will return true if only one player remains
         self.setROM()
         nextInstruction = self.memmory[self.playerCounters[self.currentPlayer].currentPointer()]
@@ -47,6 +51,7 @@ class VirtualCore:
                 self.memmory[b] = a
                 self.playerCounters[self.currentPlayer].advanceBoth(self.size)
         return False
+    
     def getInstruction(self, valueTuple): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(valueTuple[1] == ""):
             return Instruction("data", [valueTuple])
@@ -57,6 +62,7 @@ class VirtualCore:
         elif(valueTuple[1] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
+            
     def getLocation(self, valueTuple): #return -1 if not valid
         if(valueTuple[1] == ""):
             return -1
@@ -67,6 +73,7 @@ class VirtualCore:
         elif(valueTuple[1] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
+            
     def setROM(self):
         #TODO: set the read only memmory
         foo = 1    
