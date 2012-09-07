@@ -50,6 +50,12 @@ class VirtualCore:
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.memmory[location] = instruction
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+        elif(instruction.name == "jump"): #jump program counter to a point in memmory
+            destination = self.getLocation(instruction.values[0], instructionLocation)
+            if(destination == -1):
+                return self.playerCounters[self.currentPlayer].killCurrentPointer()
+            self.playerCounters[self.currentPlayer].jumpPointer(destination)
+            self.playerCounters[self.currentPlayer].advanceThread()
         elif(instruction.name == "add"): # add
             firstValue = self.getInstruction(instruction.values[0],instructionLocation)
             secondValue = self.getInstruction(instruction.values[1],instructionLocation)
