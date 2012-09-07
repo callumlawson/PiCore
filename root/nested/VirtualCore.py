@@ -48,9 +48,14 @@ class VirtualCore:
             b = self.getLocation(instruction.values[1], instructionLocation)
             if(b == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            else:
-                self.memmory[b] = a
-                self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+            self.memmory[b] = a
+            self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+        elif(instruction.name == "jump"): #jump program counter to a point in memmory
+            destination = self.getLocation(instruction.values[0], instructionLocation)
+            if(destination == -1):
+                return self.playerCounters[self.currentPlayer].killCurrentPointer()
+            self.playerCounters[self.currentPlayer].jumpPointer(destination)
+            self.playerCounters[self.currentPlayer].advanceThread()
         return False
     
     def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
