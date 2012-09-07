@@ -38,3 +38,6 @@ class PlayerProgramCounter:
     def advanceBoth(self, memmorySize):
         self.advancePointer(memmorySize)
         self.advanceThread()
+        
+    def spawnThread(self, at):
+        self.counters.insert(self.currentCounter+1, at)
