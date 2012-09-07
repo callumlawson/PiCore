@@ -25,9 +25,9 @@ class VirtualCore:
         
     def tick(self): #will return true if only one player remains
         self.setROM()
-        nextInstructionPoint = self.playerCounters[self.currentPlayer].currentPointer()
-        nextInstruction = self.memmory[nextInstructionPoint]
-        if(self.execute(nextInstruction, nextInstructionPoint)):
+        nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
+        nextInstruction = self.memmory[nextInstructionLocation]
+        if(self.execute(nextInstruction, nextInstructionLocation)):
             #TODO: feed out that a player has lost even if the game is not over (relevant for more than two players)
             self.playerCounters.pop(self.currentPlayer)
             remain = len(self.playerCounters)
@@ -38,14 +38,14 @@ class VirtualCore:
             self.currentPlayer = (self.currentPlayer + 1)%len(self.playerCounters)
         return False
         
-    def execute(self, instruction, instructionPoint):   #will return true if the player has lost his last thread
+    def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
         #TODO: execute instructions. Should edit self.memmory and call advancePointer and/or advanceThread if relevant
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
             return False
         elif(instruction.name == "move"): # move
-            a = self.getInstruction(instruction.values[0])
-            b = self.getLocation(instruction.values[1])
+            a = self.getInstruction(instruction.values[0], instructionLocation)
+            b = self.getLocation(instruction.values[1], instructionLocation)
             if(b == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
             else:
