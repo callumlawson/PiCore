@@ -25,8 +25,9 @@ class VirtualCore:
         
     def tick(self): #will return true if only one player remains
         self.setROM()
-        nextInstruction = self.memmory[self.playerCounters[self.currentPlayer].currentPointer()]
-        if(self.execute(nextInstruction)):
+        nextInstructionPoint = self.playerCounters[self.currentPlayer].currentPointer()
+        nextInstruction = self.memmory[nextInstructionPoint]
+        if(self.execute(nextInstruction, nextInstructionPoint)):
             #TODO: feed out that a player has lost even if the game is not over (relevant for more than two players)
             self.playerCounters.pop(self.currentPlayer)
             remain = len(self.playerCounters)
@@ -37,7 +38,7 @@ class VirtualCore:
             self.currentPlayer = (self.currentPlayer + 1)%len(self.playerCounters)
         return False
         
-    def execute(self, instruction):   #will return true if the player has lost his last thread
+    def execute(self, instruction, instructionPoint):   #will return true if the player has lost his last thread
         #TODO: execute instructions. Should edit self.memmory and call advancePointer and/or advanceThread if relevant
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
@@ -52,24 +53,24 @@ class VirtualCore:
                 self.playerCounters[self.currentPlayer].advanceBoth(self.size)
         return False
     
-    def getInstruction(self, valueTuple): #returns the instruction in the relevent location (or makes the pseudo data for literals)
+    def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(valueTuple[1] == ""):
             return Instruction("data", [valueTuple])
         elif(valueTuple[1] == "@"):
-            return self.memmory[valueTuple[0]]
+            return self.memmory[(valueTuple[0] + relativePoint)%self.size]
         elif(valueTuple[1] == "#"):
-            return self.memmory[self.memmory[valueTuple[0]].values[0][0]]
+            return self.memmory[(self.memmory[(valueTuple[0] + relativePoint)%self.size].values[0][0] + relativePoint)%self.size]
         elif(valueTuple[1] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
             
-    def getLocation(self, valueTuple): #return -1 if not valid
+    def getLocation(self, valueTuple, relativePoint): #return -1 if not valid
         if(valueTuple[1] == ""):
             return -1
         elif(valueTuple[1] == "@"):
-            return valueTuple[0]
+            return (valueTuple[0] + relativePoint)%self.size
         elif(valueTuple[1] == "#"):
-            return self.memmory[valueTuple[0]].values[0][0]
+            return (self.memmory[(valueTuple[0] + relativePoint)%self.size].values[0][0] + relativePoint)%self.size
         elif(valueTuple[1] == "$"):
             #TODO: stuff concerning read only stuff
             foo = 1
