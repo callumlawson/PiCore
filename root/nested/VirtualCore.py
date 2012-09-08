@@ -63,22 +63,16 @@ class VirtualCore:
             self.playerCounters[self.currentPlayer].advanceThread()
             
         elif(instruction.name == "add"): # add
-            firstValue = self.getInstruction(instruction.values[0],instructionLocation)
-            secondValue = self.getInstruction(instruction.values[1],instructionLocation)
-            location = self.getLocation(instruction.values[2],instructionLocation)
-            if(location == -1): #invalid destination, kills thread
-                return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memory[location] = Instruction("dat",["",(firstValue.values[0][1] + secondValue.values[0][1])%self.size])
-            self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+            return self.mathOperation(instruction, instructionLocation, self.addOperation) 
             
-        elif(instruction.name == "sub"): # subtract
-            firstValue = self.getInstruction(instruction.values[0],instructionLocation)
-            secondValue = self.getInstruction(instruction.values[1],instructionLocation)
-            location = self.getLocation(instruction.values[2],instructionLocation)
-            if(location == -1): #invalid destination, kills thread
-                return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memory[location] = Instruction("dat",["",(firstValue.values[0][1] - secondValue.values[0][1])%self.size])
-            self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+        elif(instruction.name == "sub"): # add
+            return self.mathOperation(instruction, instructionLocation, self.subOperation) 
+            
+        elif(instruction.name == "mlt"): # add
+            return self.mathOperation(instruction, instructionLocation, self.multOperation) 
+            
+        elif(instruction.name == "dvd"): # add
+            return self.mathOperation(instruction, instructionLocation, self.divOperation) 
             
         elif(instruction.name == "jpi"): #jump if
             firstValue = self.getInstruction(instruction.values[1],instructionLocation)
@@ -99,26 +93,24 @@ class VirtualCore:
             self.playerCounters[self.currentPlayer].advancePointer()
             self.playerCounters[self.currentPlayer].spawnThead(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
-            
-        elif(instruction.name == "mlt"): # multiply
-            firstValue = self.getInstruction(instruction.values[0],instructionLocation)
-            secondValue = self.getInstruction(instruction.values[1],instructionLocation)
-            location = self.getLocation(instruction.values[2],instructionLocation)
-            if(location == -1): #invalid destination, kills thread
-                return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memory[location] = Instruction("dat",["",(firstValue.values[0][1] * secondValue.values[0][1])%self.size])
-            self.playerCounters[self.currentPlayer].advanceBoth(self.size)
-            
-        elif(instruction.name == "div"): # divide
-            firstValue = self.getInstruction(instruction.values[0],instructionLocation)
-            secondValue = self.getInstruction(instruction.values[1],instructionLocation)
-            location = self.getLocation(instruction.values[2],instructionLocation)
-            if(location == -1): #invalid destination, kills thread
-                return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memory[location] = Instruction("dat",["",math.floor(firstValue.values[0][1] / secondValue.values[0][1])%self.size])
-            self.playerCounters[self.currentPlayer].advanceBoth(self.size)
         return False
-    
+    def mathOperation(self, instruction, instructionLocation, op):
+        firstValue = self.getInstruction(instruction.values[0],instructionLocation)
+        secondValue = self.getInstruction(instruction.values[1],instructionLocation)
+        location = self.getLocation(instruction.values[2],instructionLocation)
+        if(location == -1): #invalid destination, kills thread
+            return self.playerCounters[self.currentPlayer].killCurrentPointer()
+        self.memory[location].value[0] = (self.memory[location].value[0][0],op(firstValue.values[0][1] , secondValue.values[0][1])%self.size)
+        self.playerCounters[self.currentPlayer].advanceBoth(self.size)
+        return False
+    def addOperation(self, op1, op2):
+        return op1 + op2
+    def subOperation(self, op1, op2):
+        return op1 - op2
+    def multOperation(self, op1, op2):
+        return op1 * op2
+    def divOperation(self, op1, op2):
+        return math.floor(op1 / op2)
     def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(valueTuple[0] == ""):
             return Instruction("dat", [valueTuple])
