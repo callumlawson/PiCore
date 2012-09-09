@@ -5,6 +5,7 @@ Created on 7 Sep 2012
 '''
 
 import Instruction
+from Instruction import Instruction
 
 class Parser:
     
@@ -57,7 +58,7 @@ class Parser:
                         else: 
                             instructionArguments.append(("",argument[0:]))
                     
-                    program.append(Instruction.Instruction(instruction,instructionArguments))
+                    program.append(Instruction(instruction,instructionArguments))
                     
         file.close()
         return program
