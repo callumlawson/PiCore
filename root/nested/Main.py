@@ -17,7 +17,7 @@ if __name__ == '__main__':
     #Init
     pygame.init()
     fpsClock = pygame.time.Clock()
-    windowSurfaceObj = pygame.display.set_mode((640,480))
+    windowSurfaceObj = pygame.display.set_mode((640,480),SWSURFACE)
     pygame.display.set_caption('Pi Core')
     mousex, mousey = 0,0
     
