@@ -28,11 +28,11 @@ class Parser:
         else: self.error("Non recognised instuction: " + token)
         
     def checkInstruction(self,Instruction): #Check that the Instruction has right number of arguments/ is otherwise valid
-        foo = 1 #TODO                       #User should be given feedback
+        pass #TODO                       #User should be given feedback
 
     def error(self, message):
         print message
-        foo = 1 #TODO
+        pass #TODO
         
     def processFile(self,path):
     
@@ -48,6 +48,7 @@ class Parser:
                     instructionArguments = []
                                                    
                     instruction = self.processInstruction(tokens[0]) #The instruction is the first token changed to a lower case 3letter code.
+                    #TODO abort if not recognised... do in error?
                     arguments = tokens[1:]                           #The rest of the tokens are arguments
                               
                     for argument in arguments:                       #for each argument of the instruction (1-3 currently)
