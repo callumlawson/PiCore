@@ -10,6 +10,7 @@ import math
 import pgu
 from pgu import gui, timer
 from GUI import MainGui
+from Parser import Parser
 
 class GameEngine(object):
     def __init__(self, pygameDisplay):
@@ -19,6 +20,11 @@ class GameEngine(object):
         self.square.fill((0,255,0))
         self.app = MainGui(self.disp)
         self.app.engine = self
+        
+            #Parser
+        parser = Parser()
+        for instruction in  parser.processFile("demoCode.txt"):
+            print instruction.printInstruction()
 
     # Pause the game clock
     def pause(self):
@@ -76,7 +82,3 @@ class GameEngine(object):
             
             pygame.time.wait(10)
 
-### Start!
-pygameDisplay = pygame.display.set_mode((800, 600)) #Set screen size
-engine = GameEngine(pygameDisplay) #Create engine
-engine.run() #Get going....
