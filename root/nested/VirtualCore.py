@@ -4,7 +4,7 @@ Created on 7 Sep 2012
 @author: Callum
 '''
 
-import Instruction
+import Instruction 
 import PlayerProgramCounter
 import math
  
@@ -94,6 +94,7 @@ class VirtualCore:
             self.playerCounters[self.currentPlayer].spawnThead(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
         return False
+    
     def mathOperation(self, instruction, instructionLocation, op):
         firstValue = self.getInstruction(instruction.values[0],instructionLocation)
         secondValue = self.getInstruction(instruction.values[1],instructionLocation)
@@ -103,6 +104,7 @@ class VirtualCore:
         self.memory[location].value[0] = (self.memory[location].value[0][0],op(firstValue.values[0][1] , secondValue.values[0][1])%self.size)
         self.playerCounters[self.currentPlayer].advanceBoth(self.size)
         return False
+    
     def addOperation(self, op1, op2):
         return op1 + op2
     def subOperation(self, op1, op2):
@@ -111,6 +113,7 @@ class VirtualCore:
         return op1 * op2
     def divOperation(self, op1, op2):
         return math.floor(op1 / op2)
+    
     def getInstruction(self, valueTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(valueTuple[0] == ""):
             return Instruction("dat", [valueTuple])

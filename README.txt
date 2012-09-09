@@ -1,1 +1,1 @@
-//TODO
+Requires PyGame 32-bit.
