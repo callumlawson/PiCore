@@ -6,11 +6,13 @@ Created on 9 Sep 2012
 
 from GameEngine import GameEngine
 import pygame
+from pygame.locals import *
 
 if __name__ == '__main__':
     
     ### Start!
-    pygameDisplay = pygame.display.set_mode((800, 600)) #Set screen size
+    pygameDisplay=pygame.display.set_mode((800,800),HWSURFACE|DOUBLEBUF|RESIZABLE)
+    pygame.display.set_caption("PiCore")
     engine = GameEngine(pygameDisplay) #Create engine
     engine.run() #Get going....
     
