@@ -69,14 +69,14 @@ class MainGui(gui.Desktop):
             else:
                 self.engine.pause()
 
-        pauseResumeBtn = gui.Button("Pause/resume clock", height=50)
+        pauseResumeBtn = gui.Button("Pause/Resume Processor Clock", height=50)
         pauseResumeBtn.connect(gui.CLICK, pause_cb)
         table.td(pauseResumeBtn)
 
         # Add a slider for adjusting the game clock speed
         table2 = gui.Table()
 
-        timeLabel = gui.Label("Clock speed")
+        timeLabel = gui.Label("Tick Speed")
 
         table2.tr()
         table2.td(timeLabel)

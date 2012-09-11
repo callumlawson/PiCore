@@ -1,6 +1,6 @@
 //Hello this is demo code
+move @3 #4
+add @2 @3 @3
+jump @-2
 data 23
 data 12
-move @-2 #-1
-add @-2 @-3 @-2
-jump @-2
