@@ -11,6 +11,7 @@ import math
 from Instruction import Instruction
 from PlayerProgramCounter import PlayerProgramCounter
 from Parser import Parser
+
 def debugTest():
     myCore = VirtualCore(256,1)
     myParser = Parser()
@@ -19,6 +20,12 @@ def debugTest():
     for i in range(10):
         myCore.tick()
     print "hello"
+class PlayerGone:
+    playerID = -1
+    playersLeft = -1
+    def __init__ (self, ID, Left):
+        self.playerID = ID
+        self.playersLeft = Left
 class VirtualCore:
     
     playerCounters = []
@@ -40,20 +47,18 @@ class VirtualCore:
         return self.changesList
     def clearChanges(self):
         changesList = []    
-    def tick(self): #will return true if only one player remains
+    def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
         nextInstruction = self.memory[nextInstructionLocation]
         if(self.execute(nextInstruction, nextInstructionLocation)):
-            #TODO: feed out that a player has lost even if the game is not over (relevant for more than two players)
-            self.playerCounters.pop(self.currentPlayer)
-            remain = len(self.playerCounters)
-            if(remain == 1):
-                return True
+            remain = len(self.playerCounters) - 1
+            returnObject = PlayerGone(self.playerCounters.pop(self.currentPlayer).ID,remain)
             self.currentPlayer %= remain
+            return returnObject
         else:
             self.currentPlayer = (self.currentPlayer + 1)%len(self.playerCounters)
-        return False
+        return None
         
     def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
         #TODO: execute instructions. Should edit self.memory and call advancePointer and/or advanceThread if relevant
