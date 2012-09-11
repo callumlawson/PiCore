@@ -23,8 +23,8 @@ class GameEngine(object):
         #Render
         self.display = pygameDisplay
         
-        self.square = pygame.Surface((200,300)).convert_alpha()
-        self.square.fill((0,255,255))
+        self.drawArea = pygame.Surface((800,500)).convert_alpha()
+        self.drawArea.fill((0,0,0))
         
         self.application = MainGui(self.display)
         self.application.engine = self
@@ -37,17 +37,18 @@ class GameEngine(object):
     def resume(self):
         self.clock.resume()
 
-    def render(self, dest, rect): #Do the drawing stuff
+    def render(self, dest, renderArea): #Do the drawing stuff
         
-        #Draw a rotating square
-        angle = self.clock.get_time()*10
-        surf = pygame.transform.rotozoom(self.square, angle, 1)
-        r = surf.get_rect()
-        r.center = rect.center
-        dest.fill((0,0,0), rect)
-        self.display.blit(surf, r)
+        changedAreas = []
+        #Draw a rotating drawArea
+        #angle = self.clock.get_time()*10
+        #surf = pygame.transform.rotozoom(self.drawArea, angle, 1)
+        #r = surf.get_rect()
+        #r.center = rect.center
+        #dest.fill((0,0,0), rect)
+        #self.display.blit(surf, r)
 
-        return (rect,)
+        return (changedAreas)
 
     def run(self):
         
@@ -68,15 +69,15 @@ class GameEngine(object):
                     # Pass the event off to pgu
                     self.application.event(ev)
                     
-            # Render the game
-            rect = self.application.get_render_area()
+            # Setup variables
+            renderArea = self.application.get_render_area()
             updates = []
-            self.display.set_clip(rect)
+            self.display.set_clip(renderArea)
             
-            renderRectangle = self.render(self.display, rect) #Get the scene
+            renderRectangles = self.render(self.display, renderArea) #Get the scene
             
-            if (renderRectangle):
-                updates += renderRectangle
+            if (len(renderRectangles)!=0):
+                updates += renderRectangles
             self.display.set_clip()
 
             # Cap it at 30fps
