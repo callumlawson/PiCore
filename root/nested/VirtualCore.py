@@ -25,6 +25,7 @@ class VirtualCore:
     currentPlayer = 0
     memory = []
     size = 0
+    changesList = []
     
     def __init__(self, memorySize, players):
         self.playerCounters = [PlayerProgramCounter(i) for i in range(players)]
@@ -34,7 +35,11 @@ class VirtualCore:
     def load(self, position, code):
         codeLength = len(code)
         self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]
-        
+    def getChanges(self):
+        print "Im a blue monkey"
+        return self.changesList
+    def clearChanges(self):
+        changesList = []    
     def tick(self): #will return true if only one player remains
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
@@ -53,6 +58,7 @@ class VirtualCore:
     def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
         #TODO: execute instructions. Should edit self.memory and call advancePointer and/or advanceThread if relevant
         instruction.lastMod = self.currentPlayer
+        self.changesList.append(instructionLocation)
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
             
@@ -138,27 +144,27 @@ class VirtualCore:
         return math.floor(op1 / op2)
     
     def getInstruction(self, argumentTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
-        if(argumentTuple[0] == ""):
+        atLocation = self.getLocation(argumentTuple, relativePoint)
+        if(atLocation == -1):
             return Instruction("dat", [argumentTuple])
-        elif(argumentTuple[0] == "@"):
-            return self.memory[(argumentTuple[1] + relativePoint)%self.size]
-        elif(argumentTuple[0] == "#"):
-            return self.memory[(self.memory[(argumentTuple[1] + relativePoint)%self.size].arguments[0][1] + relativePoint)%self.size]
         elif(argumentTuple[0] == "$"):
             #TODO: stuff concerning read only stuff
             pass
+        return self.memory[atLocation]
             
     def getLocation(self, argumentTuple, relativePoint): #return -1 if not valid
+        loc = -1
         if(argumentTuple[0] == ""):
             return -1
         elif(argumentTuple[0] == "@"):
-            return (argumentTuple[1] + relativePoint)%self.size
+            loc = (argumentTuple[1] + relativePoint)%self.size
         elif(argumentTuple[0] == "#"):
-            return (self.memory[(argumentTuple[1] + relativePoint)%self.size].arguments[0][1] + relativePoint)%self.size
+            loc = (self.memory[(argumentTuple[1] + relativePoint)%self.size].arguments[0][1] + relativePoint)%self.size
         elif(argumentTuple[0] == "$"):
             #TODO: stuff concerning read only stuff
             pass
-            
+        self.changesList.append(loc)
+        return loc
     def setROM(self):
         #TODO: set the read only memory
         pass
