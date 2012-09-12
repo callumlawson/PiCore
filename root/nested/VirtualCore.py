@@ -28,17 +28,12 @@ class PlayerGone:
         self.playersLeft = Left
 class VirtualCore:
     
-    playerCounters = []
-    currentPlayer = 0
-    memory = []
-    size = 0
-    changesList = []
-    
     def __init__(self, memorySize, players):
-        self.playerCounters = [PlayerProgramCounter(i) for i in range(players)]
+        self.playerCounters = [PlayerProgramCounter((i)) for i in range(players)]
         self.memory = [Instruction() for j in range(memorySize)]
         self.size = memorySize
-        
+        self.currentPlayer = 0
+        self.changesList = []
     def load(self, position, code):
         codeLength = len(code)
         self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]

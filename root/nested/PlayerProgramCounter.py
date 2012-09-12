@@ -8,10 +8,6 @@ Created on 7 Sep 2012
         
 class PlayerProgramCounter:
     
-    counters = [0]
-    currentCounter = 0
-    ID = -1
-    
     def __init__(self, playerID):
         self.ID = playerID
         self.counters = [0]
