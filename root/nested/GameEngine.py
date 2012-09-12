@@ -18,7 +18,7 @@ class GameEngine(object):
     #Global
     screenWidth,screenHeight = 0,0
     memorySize = 1000
-    numPlayers = 2
+    numPlayers = 1
     squareSize = 5
     padding = 3
     menuHeight = 70
@@ -48,10 +48,12 @@ class GameEngine(object):
 
     # Pause the game clock
     def pause(self):
+        print "pause"
         self.clock.pause()
 
     # Resume the game clock
     def resume(self):
+        print "resume"
         self.clock.resume()
 
     def render(self, dest, rect): #Do the drawing stuff!
@@ -117,11 +119,11 @@ class GameEngine(object):
         
         # Main program loop
         done = False
-        while not done:
-            
+        while not done:                      
             #Update the game
-            self.virtualCore.tick()
-            
+            if not self.clock.paused: 
+                self.virtualCore.tick()
+                       
             # Process events
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or 
@@ -150,7 +152,7 @@ class GameEngine(object):
             self.display.set_clip()
 
             # Cap it at 30fps
-            self.clock.tick(20)
+            self.clock.tick(30)
 
             # Give pgu a chance to update the display (menu)
             lst = self.app.update()
@@ -158,5 +160,5 @@ class GameEngine(object):
                 updates += lst
             pygame.display.update(updates)
             
-            pygame.time.wait(10)
+            pygame.time.wait(25)
 
