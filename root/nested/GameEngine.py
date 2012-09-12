@@ -18,7 +18,7 @@ class GameEngine(object):
     #Global
     screenWidth,screenHeight = 0,0
     memorySize = 3000
-    numPlayers = 2
+    numPlayers = 3
     squareSize = 5
     padding = 3
     menuHeight = 70
@@ -36,7 +36,7 @@ class GameEngine(object):
         self.screenHeight = pygame.display.Info().current_h
         
         self.virtualCore = VirtualCore(self.memorySize,self.numPlayers)
-        self.virtualCore.playerCounters[0].counters[0] = 500
+        self.virtualCore.playerCounters[1].counters[0] = 500
         
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
         self.drawArea.fill((120,120,120))
@@ -135,7 +135,7 @@ class GameEngine(object):
                     done = True
                     
                 if event.type == pygame.VIDEORESIZE:
-                    self.display = pygame.display.set_mode(event.dict['size'],pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                    self.display = pygame.display.set_mode(event.dict['size'],pygame.HWSURFACE|pygame.RESIZABLE)
                     self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
                     self.screenWidth = event.dict['size'][0]
                     self.screenHeight = event.dict['size'][1]
