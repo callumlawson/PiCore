@@ -14,7 +14,8 @@ class PlayerProgramCounter:
     
     def __init__(self, playerID):
         self.ID = playerID
-        
+        self.counters = [0]
+        self.currentCounter = 0
     def currentPointer(self):
         return self.counters[self.currentCounter]
     
