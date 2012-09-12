@@ -62,7 +62,7 @@ class VirtualCore:
         
     def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
         #TODO: execute instructions. Should edit self.memory and call advancePointer and/or advanceThread if relevant
-        instruction.lastMod = self.currentPlayer
+        instruction.lastMod = self.playerCounters[self.currentPlayer].ID
         self.changesList.append(instructionLocation)
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
@@ -75,8 +75,6 @@ class VirtualCore:
             location = self.getLocation(instruction.arguments[1], instructionLocation)
             if(location == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            thingToMove.lastMod = self.currentPlayer
-            location.lastMod = self.currentPlayer
             self.memory[location] = thingToMove
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
             
@@ -84,7 +82,6 @@ class VirtualCore:
             destination = self.getLocation(instruction.arguments[0], instructionLocation)
             if(destination == -1):
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            destination.lastMod = self.currentPlayer
             self.playerCounters[self.currentPlayer].jumpPointer(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
             
@@ -103,14 +100,11 @@ class VirtualCore:
         elif(instruction.name == "jpi"): #jump if
             firstargument = self.getInstruction(instruction.arguments[1],instructionLocation)
             secondargument = self.getInstruction(instruction.arguments[2],instructionLocation)
-            firstargument.lastMod = self.currentPlayer
-            secondargument.lastMod= self.currentPlayer
             
             if(firstargument.arguments[0][1] == secondargument[0][1]):
                 destination = self.getLocation(instruction.arguments[0], instructionLocation)
                 if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
-                destination.lastMod = self.currentPlayer
                 self.playerCounters[self.currentPlayer].jumpPointer(destination)
                 self.playerCounters[self.currentPlayer].advanceThread()
             else:
@@ -120,7 +114,6 @@ class VirtualCore:
             destination = self.getLocation(instruction.arguments[0], instructionLocation)
             if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            destination.lastMod = self.currentPlayer
             self.playerCounters[self.currentPlayer].advancePointer()
             self.playerCounters[self.currentPlayer].spawnThead(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
@@ -133,9 +126,7 @@ class VirtualCore:
         location = self.getLocation(instruction.arguments[2],instructionLocation)
         if(location == -1): #invalid destination, kills thread
             return self.playerCounters[self.currentPlayer].killCurrentPointer()
-        firstargument.lastMod = self.currentPlayer
-        secondargument.lastMod = self.currentPlayer
-        self.memory[location].argument[0] = (self.memory[location].arguments[0][0],op(firstargument.arguments[0][1] , secondargument.arguments[0][1])%self.size)
+        self.memory[location].arguments[0] = (self.memory[location].arguments[0][0],op(int(firstargument.arguments[0][1]) , int(secondargument.arguments[0][1]))%self.size)
         self.playerCounters[self.currentPlayer].advanceBoth(self.size)
         return False
     
@@ -162,12 +153,13 @@ class VirtualCore:
         if(argumentTuple[0] == ""):
             return -1
         elif(argumentTuple[0] == "@"):
-            loc = (argumentTuple[1] + relativePoint)%self.size
+            loc = (int(argumentTuple[1]) + relativePoint)%self.size
         elif(argumentTuple[0] == "#"):
-            loc = (self.memory[(argumentTuple[1] + relativePoint)%self.size].arguments[0][1] + relativePoint)%self.size
+            loc = (int(self.memory[(int(argumentTuple[1]) + relativePoint)%self.size].arguments[0][1]) + relativePoint)%self.size
         elif(argumentTuple[0] == "$"):
             #TODO: stuff concerning read only stuff
             pass
+        self.memory[loc].lastMod = self.playerCounters[self.currentPlayer].ID
         self.changesList.append(loc)
         return loc
     def setROM(self):

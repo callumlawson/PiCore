@@ -36,6 +36,7 @@ class GameEngine(object):
         self.screenHeight = pygame.display.Info().current_h
         
         self.virtualCore = VirtualCore(self.memorySize,self.numPlayers)
+        self.virtualCore.playerCounters[0].counters[0] = 500
         
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
         self.drawArea.fill((120,120,120))
@@ -45,8 +46,10 @@ class GameEngine(object):
         
         #Parser
         parser = Parser()
-        for instruction in  parser.processFile("demoCode.txt"):
+        testCode = parser.processFile("demoCode.txt")
+        for instruction in testCode:
             print instruction.printInstruction()
+        self.virtualCore.load(0,testCode)
 
     # Pause the game clock
     def pause(self):
@@ -105,7 +108,7 @@ class GameEngine(object):
                     pygame.draw.rect(self.drawArea,self.colors[instruction.lastMod] ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
                 for playerCounter in self.virtualCore.playerCounters: #This could be done quicker
                     if count in playerCounter.counters:
-                        pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 2)
+                        pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(x*(self.squareSize), y*(self.squareSize),self.squareSize+self.padding,self.squareSize+self.padding), self.padding/2)
                     
         self.display.blit(self.drawArea,(0,0))
         return (rect,)
