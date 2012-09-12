@@ -56,25 +56,38 @@ class GameEngine(object):
         #dest.fill((0,0,0), rect)
         #angle = 90
         #surf = pygame.transform.rotozoom(self.drawArea, angle, 1)
-        
-        print self.screenWidth
+
         pygame.draw.rect(self.drawArea,pygame.Color(0,255,0),(0,0,self.screenWidth,self.screenHeight))
         
-        #Find screen space area. 
-        self.squareSize = math.floor(math.sqrt((self.screenWidth*self.screenHeight)/self.numAddresses))#Will be run on pygame.VIDEORESIZE event to improve performance
+        #TODO the self.screenHeight is stil wrong because of the menu. But otherwise this works
         
-        #print int(math.floor(self.screenWidth/(self.squareSize+self.padding)))
-        count = 0
-        while(count!=self.numAddresses):
-            for x in xrange(int(math.ceil(self.screenWidth/(self.squareSize+self.padding)))):
-                for y in xrange(int(math.ceil(self.screenHeight/(self.squareSize+self.padding)))):
-                    count+=1
-                    pygame.draw.rect(self.drawArea,pygame.Color(200,200,200) ,(x*(self.squareSize + self.padding),y*(self.squareSize + self.padding),self.squareSize,self.squareSize), 0)
-            print "error not enough addresses drawn"
-            break 
+        #I did some maths =p. Lets w is the width of the screen, h the height. X the number in a row, Y the number in a column. N the number of squares
+        #We would like the ratio of w:h to be equal to x:y. So (w/h) = (x/y).
+        #Lets assume that we end up with roughly a square, so xy = N
+        # via substitution we get x = root(wN/h). 
+        
+        numberInX = math.ceil(math.sqrt((self.screenWidth * self.numAddresses)/self.screenHeight)) #ratio of x rounded up
+        numberInY = math.ceil(self.numAddresses/numberInX) # and so in Y
+        
+        #the 'perfect' size for each cell would be
+        xSize = self.screenWidth/numberInX
+        ySize = self.screenHeight/numberInY
+        
+        #choose the smaller one to make squares
+        if(xSize < ySize):
+            self.squareSize = xSize
+        else:
+            self.squareSize = ySize
+                
+        count = 0 #the while loop would not work because it would already have done all the for loops before the while was evaluated
+        for y in xrange(int(numberInY)):
+            for x in xrange(int(numberInX)):
+                count+=1
+                if(count == self.numAddresses):
+                    break;
+                pygame.draw.rect(self.drawArea,pygame.Color(200,200,200) ,(x*(self.squareSize),y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
         
         self.display.blit(self.drawArea,(0,0))
-
         return (rect,)
 
     def run(self):
@@ -98,7 +111,7 @@ class GameEngine(object):
                     self.display = pygame.display.set_mode(event.dict['size'],pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
                     self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
                     self.screenWidth = event.dict['size'][0]
-                    self.screenHeight = event.dict['size'][0]
+                    self.screenHeight = event.dict['size'][1]
                     
                     self.app.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
                    
