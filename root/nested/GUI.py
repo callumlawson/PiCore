@@ -32,33 +32,20 @@ class DrawingArea(gui.Widget): #render the gameState
         self.imageBuffer.blit(pygameDisplay, self.get_abs_rect())
 
 class MainGui(gui.Desktop):
-    gameAreaHeight = 550
-    menuHeight = 150
+    #gameAreaHeight = 550
+    menuHeight = 80
     gameArea = None
     menuArea = None
     # The game engine
     engine = None
     display = None
 
-    def __init__(self, pygameDisplay):
+    def __init__(self, pygameDisplay, screenSize, menuHeight):
+        self.menuHeight = menuHeight
         self.display = pygameDisplay
         gui.Desktop.__init__(self)
-
-        # Setup the 'game' area where the action takes place
-        self.gameArea = DrawingArea(pygameDisplay.get_width(),
-                                    self.gameAreaHeight)
-        # Setup the gui area
-        self.menuArea = gui.Container(height=pygameDisplay.get_height()-self.gameAreaHeight)
-
-        table = gui.Table(height=pygameDisplay.get_height())
-        table.tr()
-        table.td(self.gameArea)
-        table.tr()
-        table.td(self.menuArea)
-
-        self.setup_menu()
-
-        self.init(table, pygameDisplay)
+        
+        self.updateSize(screenSize)
         
     def updateSize(self, screenSize):
         
