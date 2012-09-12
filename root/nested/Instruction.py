@@ -8,6 +8,7 @@ class Instruction:
     name = "nop"
     arguments = [("", 0)]   #(Modifier, Value) e.g [("@",5),("#",1)]
     lastMod = -1
+    
     def __init__(self, instructionName = "nop", instructionArguments = [("", 0)], creator = -1):
         self.name = instructionName
         self.arguments = instructionArguments

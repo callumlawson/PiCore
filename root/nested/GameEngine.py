@@ -18,10 +18,12 @@ class GameEngine(object):
     #Global
     screenWidth,screenHeight = 0,0
     memorySize = 1000
-    numPlayers = 1
+    numPlayers = 2
     squareSize = 5
     padding = 3
     menuHeight = 70
+    
+    colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255))
     
     display = None
     drawArea = None
@@ -97,11 +99,10 @@ class GameEngine(object):
                 
                 instruction = self.virtualCore.memory[count]
                 
-                if instruction.name == "nop":
+                if instruction.lastMod == -1:
                     pygame.draw.rect(self.drawArea,pygame.Color(200,200,200) ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
-                elif instruction.lastMod != -1:
-                    color = pygame.Color(255,255,255) #Color for differnt players
-                    pygame.draw.rect(self.drawArea,color ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
+                else:
+                    pygame.draw.rect(self.drawArea,self.colors[instruction.lastMod] ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
                 for playerCounter in self.virtualCore.playerCounters: #This could be done quicker
                     if count in playerCounter.counters:
                         pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 2)
