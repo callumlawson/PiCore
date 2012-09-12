@@ -17,7 +17,7 @@ class GameEngine(object):
     
     #Global
     screenWidth,screenHeight = 0,0
-    memorySize = 1000
+    memorySize = 3000
     numPlayers = 2
     squareSize = 5
     padding = 3
