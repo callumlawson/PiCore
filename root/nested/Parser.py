@@ -9,7 +9,7 @@ from Instruction import Instruction
 
 class Parser:
     
-    instuctionArgumentNumbers = {'dat':'1','mov':2} #TODO
+    instuctionArgumentNumbers = {'dat':1,'mov':2,'jmp':1,'jpi':3,'add':3,'sub':3,'mlt':3,'div':3,'bch':1,'nop':0} #TODO
     
     def __init__(self):  #Path of file to be parsed
         print "Parser Created" #TODO
@@ -42,23 +42,28 @@ class Parser:
         
         for line in file:
             
-            if line[0] != "/":                                       #Do not parse the line if it starts with the comment character.
+            if "/" in line:
+                print line.split("/")
+                print line.split("/") [0].split()
+                tokens = (line.split("/") [0]).split()
+            else:   
+                print line.split()                                  
                 tokens = line.split()    
                                                         
-                if len(tokens) != 0:                                 #Do not continue to parse if the line is empty.
-                    instructionArguments = []
+            if len(tokens) != 0:                                 #Do not continue to parse if the line is empty.
+                instructionArguments = []
                                                    
-                    instruction = self.processInstruction(tokens[0]) #The instruction is the first token changed to a lower case 3letter code.
+                instruction = self.processInstruction(tokens[0]) #The instruction is the first token changed to a lower case 3letter code.
                     #TODO abort if not recognised... do in error?
-                    arguments = tokens[1:]                           #The rest of the tokens are arguments
+                arguments = tokens[1:]                           #The rest of the tokens are arguments
                               
-                    for argument in arguments:                       #for each argument of the instruction (1-3 currently)
-                        if argument[0] == "@" or argument[0] == "#" or  argument[0] == "$":             
-                            instructionArguments.append((argument[0],argument[1:]))
-                        else: 
-                            instructionArguments.append(("",argument[0:]))
+                for argument in arguments:                       #for each argument of the instruction (1-3 currently)
+                    if argument[0] == "@" or argument[0] == "#" or  argument[0] == "$":             
+                        instructionArguments.append((argument[0],argument[1:]))
+                    else: 
+                        instructionArguments.append(("",argument[0:]))
                     
-                    program.append(Instruction(instruction,instructionArguments))
+                program.append(Instruction(instruction,instructionArguments))
                     
         file.close()
         return program

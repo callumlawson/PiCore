@@ -20,12 +20,14 @@ def debugTest():
     for i in range(10):
         myCore.tick()
     print "hello"
+    
 class PlayerGone:
     playerID = -1
     playersLeft = -1
     def __init__ (self, ID, Left):
         self.playerID = ID
         self.playersLeft = Left
+        
 class VirtualCore:
     
     def __init__(self, memorySize, players):

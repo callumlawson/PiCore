@@ -18,12 +18,12 @@ class GameEngine(object):
     #Global
     screenWidth,screenHeight = 0,0
     memorySize = 3000
-    numPlayers = 3
+    numPlayers = 2
     squareSize = 5
     padding = 3
     menuHeight = 70
     
-    colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255))
+    colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255))
     
     display = None
     drawArea = None
@@ -101,7 +101,7 @@ class GameEngine(object):
                     break;
                 
                 instruction = self.virtualCore.memory[count]
-                
+               
                 if instruction.lastMod == -1:
                     pygame.draw.rect(self.drawArea,pygame.Color(200,200,200) ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
                 else:
