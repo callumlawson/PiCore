@@ -33,7 +33,7 @@ class GameEngine(object):
         self.screenWidth = pygame.display.Info().current_w
         self.screenHeight = pygame.display.Info().current_h
         
-        #self.virtualCore = VirtualCore(self.memorySize,self.numPlayers)
+        self.virtualCore = VirtualCore(self.memorySize,self.numPlayers)
         
         #Parser
         parser = Parser()
@@ -73,8 +73,8 @@ class GameEngine(object):
         #Lets assume that we end up with roughly a square, so xy = N
         # via substitution we get x = root(wN/h). 
         
-        numberInX = math.ceil(math.sqrt((self.screenWidth * self.memorySize)/(self.screenHeight-self.menuHeight))) #ratio of x rounded up
-        numberInY = math.ceil(self.memorySize/numberInX) # and so in Y
+        numberInX = math.ceil(math.sqrt((self.screenWidth * self.virtualCore.size)/(self.screenHeight-self.menuHeight))) #ratio of x rounded up
+        numberInY = math.ceil(self.virtualCore.size/numberInX) # and so in Y
         
         #the 'perfect' size for each cell would be
         xSize = self.screenWidth/numberInX
@@ -90,7 +90,7 @@ class GameEngine(object):
         for y in xrange(int(numberInY)):
             for x in xrange(int(numberInX)):
                 count+=1
-                if(count == self.memorySize):
+                if(count == self.virtualCore.size):
                     break;
                 for counter in self.virtualCore.playerCounters: #This could be done quicker
                     if count == counter:
@@ -99,7 +99,7 @@ class GameEngine(object):
                 if instruction.name == "nop":
                     pygame.draw.rect(self.drawArea,pygame.Color(200,200,200) ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
                 elif instruction.lastMod != -1:
-                    color = pygame.Color((instruction.lastMod%0)*255,(instruction.lastMod%1)*255,(instruction.lastMod%2)*255) #Not efficient or sensible - but a fun idea
+                    color = pygame.Color(255,255,255) #Color for differnt players
                     pygame.draw.rect(self.drawArea,color ,(self.padding + x*(self.squareSize),self.padding + y*(self.squareSize),self.squareSize-self.padding,self.squareSize-self.padding), 0)
                     
         self.display.blit(self.drawArea,(0,0))
@@ -116,6 +116,9 @@ class GameEngine(object):
         # Main program loop
         done = False
         while not done:
+            
+            #Update the game
+        
             # Process events
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or 
@@ -133,6 +136,7 @@ class GameEngine(object):
                 else:
                     # Pass the event off to pgu
                     self.app.event(event)
+                    
             # Render the game
             rect = self.app.get_render_area()
             updates = []

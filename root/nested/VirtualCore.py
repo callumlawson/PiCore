@@ -173,6 +173,6 @@ class VirtualCore:
     def setROM(self):
         #TODO: set the read only memory
         pass
-debugTest()
+
 
 
