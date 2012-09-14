@@ -11,15 +11,6 @@ import math
 from Instruction import Instruction
 from PlayerProgramCounter import PlayerProgramCounter
 from Parser import Parser
-
-def debugTest():
-    myCore = VirtualCore(256,1)
-    myParser = Parser()
-    aProgram = myParser.processFile("demoCode.txt")
-    myCore.load(0, aProgram)
-    for i in range(10):
-        myCore.tick()
-    print "hello"
     
 class PlayerGone:
     def __init__ (self, ID, Left):
@@ -28,8 +19,9 @@ class PlayerGone:
         
 class VirtualCore:
     
-    def __init__(self, memorySize, players):
-        self.playerCounters = [PlayerProgramCounter((i)) for i in range(players)]
+    def __init__(self, memorySize):
+        self.playerCounters = []
+        self.IDcount = 0
         self.memory = [Instruction() for j in range(memorySize)]
         self.size = memorySize
         self.currentPlayer = 0
@@ -37,6 +29,8 @@ class VirtualCore:
     def load(self, position, code):
         codeLength = len(code)
         self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]
+        self.playerCounters.append(PlayerProgramCounter(self.IDcount,position))
+        self.IDcount +=1
     def getChanges(self):
         print "Im a blue monkey"
         return self.changesList

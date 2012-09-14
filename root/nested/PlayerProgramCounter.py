@@ -8,9 +8,9 @@ Created on 7 Sep 2012
         
 class PlayerProgramCounter:
     
-    def __init__(self, playerID):
+    def __init__(self, playerID, startPointer = 0):
         self.ID = playerID
-        self.counters = [0]
+        self.counters = [startPointer]
         self.currentCounter = 0
     def currentPointer(self):
         return self.counters[self.currentCounter]
