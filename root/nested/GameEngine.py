@@ -18,7 +18,7 @@ class GameEngine(object):
     #Global
     screenWidth,screenHeight = 0,0
     memorySize = 3000
-    numPlayers = 3
+    numPlayers = 2
     squareSize = 5
     padding = 3
     menuHeight = 70
@@ -93,13 +93,9 @@ class GameEngine(object):
         else:
             self.squareSize = ySize
         
-        count = 0 
+        count = 0
         for y in xrange(int(numberInY)):
             for x in xrange(int(numberInX)):
-                count+=1
-                if(count == self.virtualCore.size):
-                    break;
-                
                 instruction = self.virtualCore.memory[count]
                 
                 if instruction.lastMod == -1:
@@ -109,7 +105,9 @@ class GameEngine(object):
                 for playerCounter in self.virtualCore.playerCounters: #This could be done quicker
                     if count in playerCounter.counters:
                         pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(x*(self.squareSize), y*(self.squareSize),self.squareSize+self.padding,self.squareSize+self.padding), self.padding/2)
-                    
+                count +=1
+                if(count == self.virtualCore.size):
+                    break;
         self.display.blit(self.drawArea,(0,0))
         return (rect,)
 

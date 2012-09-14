@@ -1,5 +1,5 @@
 //Hello this is demo code
-move @3 #4
+move @4 #4
 add @2 @3 @3
 jump @-2
 data 23
