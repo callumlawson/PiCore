@@ -46,6 +46,7 @@ class VirtualCore:
         changesList = []  
           
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
+        print str(self.memory[11].lastMod)
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
         nextInstruction = self.memory[nextInstructionLocation]
