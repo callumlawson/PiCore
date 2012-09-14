@@ -105,6 +105,7 @@ class GameEngine(object):
                 for playerCounter in self.virtualCore.playerCounters: #This could be done quicker
                     if count in playerCounter.counters:
                         pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(x*(self.squareSize), y*(self.squareSize),self.squareSize+self.padding,self.squareSize+self.padding), self.padding/2)
+                        
                 count +=1
                 if(count == self.virtualCore.size):
                     break;
