@@ -46,7 +46,6 @@ class VirtualCore:
         changesList = []  
           
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
-        print str(self.memory[11].lastMod)
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
         nextInstruction = self.memory[nextInstructionLocation]
@@ -74,7 +73,7 @@ class VirtualCore:
             location = self.getLocation(instruction.arguments[1], instructionLocation)
             if(location == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.memory[location] = thingToMove
+            self.memory[location] = thingToMove.clone()
             self.playerCounters[self.currentPlayer].advanceBoth(self.size)
             
         elif(instruction.name == "jmp"): #jump program counter to a point in memory
