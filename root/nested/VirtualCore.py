@@ -22,8 +22,6 @@ def debugTest():
     print "hello"
     
 class PlayerGone:
-    playerID = -1
-    playersLeft = -1
     def __init__ (self, ID, Left):
         self.playerID = ID
         self.playersLeft = Left
@@ -46,16 +44,21 @@ class VirtualCore:
         changesList = []  
           
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
+        if(len(self.playerCounters) == 0):
+            print "Tick called with no players"
+            return None
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
         nextInstruction = self.memory[nextInstructionLocation]
         if(self.execute(nextInstruction, nextInstructionLocation)):
             remain = len(self.playerCounters) - 1
             returnObject = PlayerGone(self.playerCounters.pop(self.currentPlayer).ID,remain)
-            self.currentPlayer %= remain
+            if(remain != 0):
+                self.currentPlayer %= remain
             return returnObject
         else:
             self.currentPlayer = (self.currentPlayer + 1)%len(self.playerCounters)
+        
         return None
         
     def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
