@@ -15,6 +15,8 @@ import time
 import pygame
 import pgu
 from pgu import gui, timer
+from pygame.locals import *
+
 
 class DrawingArea(gui.Widget): #render the gameState
     def __init__(self, width, height):
@@ -48,7 +50,6 @@ class MainGui(gui.Desktop):
         self.updateSize(screenSize)
         
     def updateSize(self, screenSize):
-        
         self.gameArea = DrawingArea(screenSize[0],screenSize[1]-self.menuHeight)
         self.menuArea = gui.Container(height = self.menuHeight)
         
@@ -75,15 +76,15 @@ class MainGui(gui.Desktop):
 
         pauseResumeBtn = gui.Button("Pause/Resume Processor Clock", height=50)
         pauseResumeBtn.connect(gui.CLICK, pause_cb)
-        table.td(pauseResumeBtn)
+       
 
         # Add a slider for adjusting the game clock speed
-        table2 = gui.Table()
+        speedSelTable = gui.Table()
 
         timeLabel = gui.Label("Tick Speed")
 
-        table2.tr()
-        table2.td(timeLabel)
+        speedSelTable.tr()
+        speedSelTable.td(timeLabel)
 
         slider = gui.HSlider(value=23,min=0,max=100,size=20,height=16,width=120)
 
@@ -92,15 +93,38 @@ class MainGui(gui.Desktop):
 
         slider.connect(gui.CHANGE, update_speed)
 
-        table2.tr()
-        table2.td(slider)
-
-        table.td(table2)
-
+        speedSelTable.tr()
+        speedSelTable.td(slider)
+        
+        ##Open File Dialog - to load user programs
+        def open_file_browser(self):
+            fileDialog = gui.FileDialog()
+            fileDialog.connect(gui.CHANGE, handle_file_browser_closed, fileDialog)
+            fileDialog.open()
+        
+        def handle_file_browser_closed(dlg):
+            if dlg.value: input_file.value = dlg.value
+        
+        td_style = {'padding_right': 10}
+        loadFileTable = gui.Table()
+        loadFileTable.tr()
+        loadFileTable.td( gui.Label('Load:') , style=td_style )
+        input_file = gui.Input(size = 10)
+        loadFileTable.td( input_file, style=td_style )
+        b = gui.Button("Browse...")
+        loadFileTable.td( b, style=td_style )
+        b.connect(gui.CLICK, open_file_browser, None)
+        
+        table.td(loadFileTable)
+        table.td(pauseResumeBtn)
+        table.td(speedSelTable)
+        
         self.menuArea.add(table, 0, 0)
+        
 
     def get_render_area(self):
         return self.gameArea.get_abs_rect()
-
+    
+   
 
 

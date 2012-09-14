@@ -156,7 +156,7 @@ class GameEngine(object):
             self.display.set_clip()
 
             # Cap it at 30fps
-            self.clock.tick(30)
+            #self.clock.tick(25)
 
             # Give pgu a chance to update the display (menu)
             lst = self.app.update()
@@ -164,5 +164,5 @@ class GameEngine(object):
                 updates += lst
             pygame.display.update(updates)
             
-            pygame.time.wait(25)
+            pygame.time.wait(0)
 

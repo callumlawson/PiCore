@@ -43,7 +43,8 @@ class VirtualCore:
         print "Im a blue monkey"
         return self.changesList
     def clearChanges(self):
-        changesList = []    
+        changesList = []  
+          
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()

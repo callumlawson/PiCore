@@ -3,4 +3,4 @@ move @3 #4
 add @2 @3 @3
 jump @-2
 data 23 
-data 12 /This is another comment
+data 12 /This is another comment in the line!
