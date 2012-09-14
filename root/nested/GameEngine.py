@@ -115,9 +115,7 @@ class GameEngine(object):
     def run(self):
         self.app.update()
         pygame.display.flip()
-
         self.font = pygame.font.SysFont("", 16)
-
         self.clock = timer.Clock() #pygame.time.Clock()
         
         # Main program loop
@@ -131,16 +129,16 @@ class GameEngine(object):
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or 
                     event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    done = True
-                    
+                    done = True 
                 if event.type == pygame.VIDEORESIZE:
-                    self.display = pygame.display.set_mode(event.dict['size'],pygame.HWSURFACE|pygame.RESIZABLE)
+                    self.display = pygame.display.set_mode(event.dict['size'],pygame.RESIZABLE)
                     self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
                     self.screenWidth = event.dict['size'][0]
                     self.screenHeight = event.dict['size'][1]
                     self.app.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
                     pygame.display.update()
                     print self.screenWidth,self.screenHeight
+                    self.app.event(event)
                 else:
                     # Pass the event off to pgu
                     self.app.event(event)

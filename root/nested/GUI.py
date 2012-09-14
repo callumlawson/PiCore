@@ -32,6 +32,62 @@ class DrawingArea(gui.Widget): #render the gameState
     def save_background(self):
         pygameDisplay = pygame.display.get_surface()
         self.imageBuffer.blit(pygameDisplay, self.get_abs_rect())
+        
+class ProgramSelector(gui.Dialog):
+     
+    _count = 1 # for added items
+    
+    def __init__(self,**params):
+        title = gui.Label("PiCore Program Selector")
+        
+        def clear_list(arg):
+            my_list.clear()
+            my_list.resize()
+            my_list.repaint()
+
+        def remove_list_item(arg):
+            v = my_list.value
+            if v:
+                item = v
+                my_list.remove(item)
+                my_list.resize()
+                my_list.repaint()
+
+        def add_list_item(arg):
+            my_list.add(arg,value = self._count)
+            my_list.resize()
+            my_list.repaint()
+            self._count += 1
+            
+        ##Open File Dialog - to load user programs
+        def open_file_browser(arg):
+            fileDialog = gui.FileDialog()
+            fileDialog.connect(gui.CHANGE, handle_file_browser_closed, fileDialog)
+            fileDialog.open()
+        
+        def handle_file_browser_closed(dlg):
+            if dlg.value: 
+                #input_file.value = dlg.value
+                add_list_item(dlg.input_file.value)
+
+        #List selector
+        listContainer = gui.Container(width=400, height=150)
+        my_list = gui.List(width= 200, height=100)  
+        listContainer.add(my_list, 220, 20) 
+         
+        button = gui.Button("Add program", width=150)
+        listContainer.add(button, 20, 30)
+        button.connect(gui.CLICK, open_file_browser, None)
+
+        button = gui.Button("remove selected", width=150)
+        listContainer.add(button, 20, 60)
+        button.connect(gui.CLICK, remove_list_item, None)
+
+        button = gui.Button("clear", width=150)
+        listContainer.add(button, 20, 90)
+        button.connect(gui.CLICK, clear_list, None)
+        
+        gui.Dialog.__init__(self,title,listContainer)
 
 class MainGui(gui.Desktop):
     #gameAreaHeight = 550
@@ -41,6 +97,8 @@ class MainGui(gui.Desktop):
     # The game engine
     engine = None
     display = None
+    
+    opened = False
 
     def __init__(self, pygameDisplay, screenSize, menuHeight):
         self.menuHeight = menuHeight
@@ -48,6 +106,41 @@ class MainGui(gui.Desktop):
         gui.Desktop.__init__(self)
         
         self.updateSize(screenSize)
+        
+    def open(self, dlg, pos=None):
+        # Gray out the game area before showing the popup
+        if(not self.opened):
+            rect = self.gameArea.get_abs_rect()
+            dark = pygame.Surface(rect.size).convert_alpha()
+            dark.fill((0,0,0,150))
+            pygame.display.get_surface().blit(dark, rect)
+            # Save whatever has been rendered to the 'game area' so we can
+            # render it as a static image while the dialog is open.
+            self.gameArea.save_background()
+            self.opened = True
+            
+        # Pause the gameplay while the dialog is visible
+        running = not(self.engine.clock.paused)
+        self.engine.pause()
+        
+        size = (self.engine.screenWidth,self.engine.screenHeight)
+        pygame.display.set_mode((self.engine.screenWidth,self.engine.screenHeight+1))
+        
+        gui.Desktop.open(self, dlg, pos)
+        while (dlg.is_open()):#
+            for event in pygame.event.get():
+                self.event(event)
+                
+            rects = self.update()
+            if (rects):
+                pygame.display.update(rects)
+        if (running):
+            # Resume gameplay
+            self.opened = False
+            pygame.display.set_mode(size,pygame.RESIZABLE)
+            self.updateSize(size)
+            pygame.display.update()
+            self.engine.resume()
         
     def updateSize(self, screenSize):
         self.gameArea = DrawingArea(screenSize[0],screenSize[1]-self.menuHeight)
@@ -96,26 +189,13 @@ class MainGui(gui.Desktop):
         speedSelTable.tr()
         speedSelTable.td(slider)
         
-        ##Open File Dialog - to load user programs
-        def open_file_browser(self):
-            fileDialog = gui.FileDialog()
-            fileDialog.connect(gui.CHANGE, handle_file_browser_closed, fileDialog)
-            fileDialog.open()
+        #Program selector button
+        programSelectorDialog = ProgramSelector()
+        loadProgsBtn = gui.Button("Load Programs", height=50)
+        loadProgsBtn.connect(gui.CLICK,programSelectorDialog.open,None)
         
-        def handle_file_browser_closed(dlg):
-            if dlg.value: input_file.value = dlg.value
-        
-        td_style = {'padding_right': 10}
-        loadFileTable = gui.Table()
-        loadFileTable.tr()
-        loadFileTable.td( gui.Label('Load:') , style=td_style )
-        input_file = gui.Input(size = 10)
-        loadFileTable.td( input_file, style=td_style )
-        b = gui.Button("Browse...")
-        loadFileTable.td( b, style=td_style )
-        b.connect(gui.CLICK, open_file_browser, None)
-        
-        table.td(loadFileTable)
+        #table.td(loadFileTable)
+        table.td(loadProgsBtn)
         table.td(pauseResumeBtn)
         table.td(speedSelTable)
         

@@ -11,7 +11,7 @@ from pygame.locals import *
 if __name__ == '__main__':
     
     ### Start!
-    pygameDisplay=pygame.display.set_mode((800,800),HWSURFACE|RESIZABLE)
+    pygameDisplay=pygame.display.set_mode((800,800),RESIZABLE)
     pygame.display.set_caption("PiCore")
     engine = GameEngine(pygameDisplay) #Create engine
     engine.run() #Get going....
