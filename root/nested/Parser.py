@@ -3,8 +3,6 @@ Created on 7 Sep 2012
 
 @author: Callum
 '''
-
-import Instruction
 from Instruction import Instruction
 
 class Parser:

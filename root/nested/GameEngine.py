@@ -4,10 +4,9 @@ Created on 9 Sep 2012
 @author: Callum
 '''
 
-import pygame
-import time
+import random
 import math
-import pgu
+import pygame
 from VirtualCore import VirtualCore
 from pgu import gui, timer
 from GUI import MainGui
@@ -15,28 +14,19 @@ from Parser import Parser
 
 class GameEngine(object):
     
-    #Global
-    screenWidth,screenHeight = 0,0
-    memorySize = 3000
-    numPlayers = 2
-    squareSize = 5
+    #Global - I will kill you if you add statics
+
     padding = 3
-    menuHeight = 70
-    
     colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255))
     
-    display = None
-    drawArea = None
-    virtualCore = None
-    
     def __init__(self, pygameDisplay):
+        self.programNames = []
+        
+        self.menuHeight = 70
         
         self.display = pygameDisplay
         self.screenWidth = pygame.display.Info().current_w
         self.screenHeight = pygame.display.Info().current_h
-        
-        self.virtualCore = VirtualCore(self.memorySize,self.numPlayers)
-        self.virtualCore.playerCounters[1].counters[0] = 500
         
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
         self.drawArea.fill((120,120,120))
@@ -49,9 +39,18 @@ class GameEngine(object):
         testCode = parser.processFile("demoCode.txt")
         for instruction in testCode:
             print instruction.printInstruction()
-        self.virtualCore.load(0,testCode)
+        self.newCoreGame(1000, [testCode], ["demoCode"])
 
-    # Pause the game clock
+
+    def newCoreGame(self, size, programs, names):
+        self.virtualCore = VirtualCore(size)
+        self.programNames = names
+        c = 0
+        for program in programs:
+            pos = int((c*size)/len(programs) + random.randint(0, int(1.5 * len(program))))
+            self.virtualCore.load(pos, program)
+            c +=1
+    # Pause the game clock    
     def pause(self):
         print "pause"
         self.clock.pause()
@@ -122,9 +121,10 @@ class GameEngine(object):
         done = False
         while not done:                      
             #Update the game
-            if not self.clock.paused: 
-                self.virtualCore.tick()
-                       
+            if not self.clock.paused and self.virtualCore != None: 
+                ret = self.virtualCore.tick()
+                if(ret != None): #player out
+                    print "Player " + str(ret.playerID) + " who loaded " + self.programNames[ret.playerID] + " lost. There are " + str(ret.playersLeft) + " players remaining"
             # Process events
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT or 

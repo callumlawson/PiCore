@@ -3,14 +3,9 @@ Created on 7 Sep 2012
 
 @author: Callum Lawson
 '''
-
-import Instruction 
-import PlayerProgramCounter
-import Parser
 import math
 from Instruction import Instruction
 from PlayerProgramCounter import PlayerProgramCounter
-from Parser import Parser
     
 class PlayerGone:
     def __init__ (self, ID, Left):
@@ -35,7 +30,7 @@ class VirtualCore:
         print "Im a blue monkey"
         return self.changesList
     def clearChanges(self):
-        changesList = []  
+        self.changesList = []  
           
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
         if(len(self.playerCounters) == 0):
