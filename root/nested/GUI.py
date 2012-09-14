@@ -35,23 +35,31 @@ class DrawingArea(gui.Widget): #render the gameState
         
 class ProgramSelector(gui.Dialog):
      
-    _count = 1 # for added items
-    
     def __init__(self,**params):
         title = gui.Label("PiCore Program Selector")
+        self._count = 1
+        self.programNames = []
+        self.programPaths = []
         
         def clear_list(arg):
             my_list.clear()
             my_list.resize()
             my_list.repaint()
+            self.programNames = []
+            self.programPaths = []
 
         def remove_list_item(arg):
             v = my_list.value
             if v:
                 item = v
+                print item
                 my_list.remove(item)
                 my_list.resize()
                 my_list.repaint()
+                #self.programNames.pop(item-1)
+                #self.programPaths.pop(item-1)
+                print self.programNames
+                print self.programPaths
 
         def add_list_item(arg):
             my_list.add(arg,value = self._count)
@@ -67,8 +75,13 @@ class ProgramSelector(gui.Dialog):
         
         def handle_file_browser_closed(dlg):
             if dlg.value: 
-                #input_file.value = dlg.value
-                add_list_item(dlg.input_file.value)
+                #input_file.value = dlg.value 
+                progName = dlg.input_file.value.split(".")[0]
+                add_list_item(progName)
+                self.programNames.append(progName)
+                self.programPaths.append(dlg.value)
+                print self.programNames
+                print self.programPaths
 
         #List selector
         listContainer = gui.Container(width=400, height=150)

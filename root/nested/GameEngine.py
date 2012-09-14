@@ -110,7 +110,10 @@ class GameEngine(object):
                     break;
         self.display.blit(self.drawArea,(0,0))
         return (rect,)
-
+    
+    def gameOver(self):
+        pass
+    
     def run(self):
         self.app.update()
         pygame.display.flip()
@@ -154,7 +157,6 @@ class GameEngine(object):
 
             # Cap it at 30fps
             #self.clock.tick(25)
-
             # Give pgu a chance to update the display (menu)
             lst = self.app.update()
             if (lst):

@@ -40,12 +40,10 @@ class Parser:
         
         for line in file:
             
-            if "/" in line:
-                print line.split("/")
-                print line.split("/") [0].split()
+            if "/" in line:   
                 tokens = (line.split("/") [0]).split()
             else:   
-                print line.split()                                  
+                #print line.split()                                  
                 tokens = line.split()    
                                                         
             if len(tokens) != 0:                                 #Do not continue to parse if the line is empty.
