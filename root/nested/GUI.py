@@ -225,6 +225,7 @@ class MainGui(gui.Desktop):
         
         def start_sim(arg):
             self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
+            
             #table.remove(startBtn)
             #table.td(resetBtn, 0, 0)
             #self.menuArea.add(table, 0, 0)

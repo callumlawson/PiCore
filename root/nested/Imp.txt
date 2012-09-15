@@ -1,0 +1,2 @@
+//The simplest PiCore program
+MOV @0 @1
