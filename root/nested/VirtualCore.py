@@ -104,7 +104,7 @@ class VirtualCore:
             if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.playerCounters[self.currentPlayer].advancePointer(self.size)
-            self.playerCounters[self.currentPlayer].spawnThead(destination)
+            self.playerCounters[self.currentPlayer].spawnThread(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
             
         return False
