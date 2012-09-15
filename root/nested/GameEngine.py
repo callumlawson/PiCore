@@ -19,10 +19,10 @@ class GameEngine(object):
     colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255))
     
     def __init__(self, pygameDisplay):
-        self.programNames = []
-              
-        self.menuHeight = 70
         
+        self.initCoreSize = 3016
+        self.programNames = []   
+        self.menuHeight = 70
         self.display = pygameDisplay
         self.screenWidth = pygame.display.Info().current_w
         self.screenHeight = pygame.display.Info().current_h
@@ -30,12 +30,12 @@ class GameEngine(object):
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
         self.drawArea.fill((120,120,120)) 
         
-        self.app = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight)
+        self.app = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight,self.initCoreSize)
         self.app.engine = self
         
         self.rect = self.app.get_render_area()
         
-        self.startGame(3000, [], [])
+        self.startGame(self.initCoreSize, [], [])
         
         self.doResize()
         
@@ -169,5 +169,5 @@ class GameEngine(object):
                 updates += lst
             pygame.display.update(updates)
             
-            pygame.time.wait(10)
+            pygame.time.wait(30)
 

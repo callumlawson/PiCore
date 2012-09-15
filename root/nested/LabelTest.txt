@@ -1,0 +1,18 @@
+
+
+
+firstLine: mov @bomb #location /Bob!
+
+add @location 1 @location
+
+
+/The Code still works!
+
+jump @firstLine /Cow
+/Hello
+bomb: data 33
+location: data 10
+
+
+
+/334123

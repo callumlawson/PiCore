@@ -126,11 +126,11 @@ class MainGui(gui.Desktop):
     display = None
     opened = False
 
-    def __init__(self, pygameDisplay, screenSize, menuHeight):
+    def __init__(self, pygameDisplay, screenSize, menuHeight,initCoreSize):
         self.menuHeight = menuHeight
         self.display = pygameDisplay
         gui.Desktop.__init__(self)
-        self.coreSize = 3000
+        self.coreSize = initCoreSize
         self.programNames = []
         self.programPaths = []
         self.updateSize(screenSize)#Also sets up menu

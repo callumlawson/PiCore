@@ -11,7 +11,7 @@ class Instruction:
         self.name = instructionName
         self.arguments = instructionArguments
         self.lastMod = creator
-    def printInstruction(self):
+    def toString(self):
         return self.name + " " + " ".join(map(str, self.arguments))
     def clone(self):
         return Instruction(self.name,self.arguments,self.lastMod)
