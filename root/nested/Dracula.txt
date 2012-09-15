@@ -1,9 +1,9 @@
 //Zis is ze vampire!
 
 //zis is mode vun of operation(get ze buggers to jump into ze trap)
-mov @8 #9 		//move a jump ahead of self
-sub #8 @8 #8 		//make it point to the trap
-add @7 1 @7 		//change destination for next bomb
+sub @8 @9 @8 		//make it point to the trap
+mov @7 #8 		//move a jump ahead of self
+add @7 10 @7 		//change destination for next bomb
 jpi @-3 @7 0		//keep bombing jumps if the trap has not been activated
 
 //zis is ze second mode, data bombs
@@ -13,7 +13,7 @@ add @5 1 @5		//change dest for bext bomb
 jmp @-2			//keep on bombing data
 //zis is data for bombing
 jmp @10 		//instruction to bomb with
-data 10 		//destination to bomb
+data 15 		//destination to bomb
 
 //zis is ze deadly life sucking loop
 add @0 1 @0

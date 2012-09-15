@@ -90,7 +90,7 @@ class VirtualCore:
             firstargument = self.getInstruction(instruction.arguments[1],instructionLocation)
             secondargument = self.getInstruction(instruction.arguments[2],instructionLocation)
             
-            if(firstargument.arguments[0][1] == secondargument[0][1]):
+            if(firstargument.arguments[0][1] == secondargument.arguments[0][1]):
                 destination = self.getLocation(instruction.arguments[0], instructionLocation)
                 if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
