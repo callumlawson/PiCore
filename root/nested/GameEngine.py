@@ -15,20 +15,12 @@ from Parser import Parser
 class GameEngine(object):
     
     #Global - I will kill you if you add statics
-
     padding = 3
     colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255))
     
     def __init__(self, pygameDisplay):
         self.programNames = []
-        
-        #Parser
-        parser = Parser()
-        testCode = parser.processFile("demoCode.txt")
-        for instruction in testCode:
-            print instruction.printInstruction()
-        self.newCoreGame(10000, [testCode], ["demoCode"])
-        
+              
         self.menuHeight = 70
         
         self.display = pygameDisplay
@@ -36,26 +28,35 @@ class GameEngine(object):
         self.screenHeight = pygame.display.Info().current_h
         
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
-        self.drawArea.fill((120,120,120))
+        self.drawArea.fill((120,120,120)) 
         
         self.app = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight)
         self.app.engine = self
         
         self.rect = self.app.get_render_area()
         
+        self.startGame(3000, [], [])
+        
         self.doResize()
         
         self.programNames = []
-        self.programPaths = []
-
-    def newCoreGame(self, size, programs, names):
-        self.virtualCore = VirtualCore(size)
-        self.programNames = names
+        self.programPaths = []       
+    
+    def startGame(self,coreSize,programNames,programPaths):
+        self.programNames = programNames
+        self.programPaths = programPaths
+        programs = []
+        parser = Parser()
+        for path in self.programPaths:
+            programs.append(parser.processFile(path))
+        self.virtualCore = VirtualCore(coreSize)
         c = 0
         for program in programs:
-            pos = int((c*size)/len(programs) + random.randint(0, int(1.5 * len(program))))
+            pos = int((c*coreSize)/len(programs) + random.randint(0, int(1.5 * len(program))))
             self.virtualCore.load(pos, program)
-            c +=1
+            c +=1      
+        self.doResize()
+    
     # Pause the game clock    
     def pause(self):
         print "pause"
@@ -81,6 +82,7 @@ class GameEngine(object):
         else:
             self.squareSize = ySize
         self.fullRender()
+        
     def partRender(self):
         for index in self.virtualCore.getChanges():
             y = int(index/self.numberInX)
@@ -90,6 +92,7 @@ class GameEngine(object):
         self.virtualCore.clearChanges()
         self.display.blit(self.drawArea,(0,0))
         return (self.rect, )
+    
     def fullRender(self): #Do the drawing stuff!
         self.virtualCore.clearChanges()
         pygame.draw.rect(self.drawArea,pygame.Color(0,0,0),(0,0,self.screenWidth,self.screenHeight-self.menuHeight))
@@ -103,6 +106,7 @@ class GameEngine(object):
                     break;
         self.display.blit(self.drawArea,(0,0))
         return (self.rect, )
+    
     def renderRectangle(self, x, y, index):
         instruction = self.virtualCore.memory[index]
         if instruction.lastMod == -1:

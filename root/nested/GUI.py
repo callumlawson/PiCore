@@ -35,7 +35,6 @@ class DrawingArea(gui.Widget): #render the gameState
         
 class ProgramSelector(gui.Dialog):
      
-     
     def __init__(self,MainGui):
         title = gui.Label("PiCore Program Selector")
         self.programNames = []
@@ -63,9 +62,6 @@ class ProgramSelector(gui.Dialog):
                 
                 self.programNames.remove(theItem.widget.value)
                 self.programPaths.remove(item)
-                
-                print self.programNames
-                print self.programPaths
 
         def add_list_item(arg,path):
             my_list.add(arg,value = path)
@@ -73,9 +69,7 @@ class ProgramSelector(gui.Dialog):
             self.programPaths.append(path)
             my_list.resize()
             my_list.repaint()
-            
-            print self.programNames
-            print self.programPaths
+          
             
         ##Open File Dialog - to load user programs
         def open_file_browser(arg):
@@ -93,8 +87,8 @@ class ProgramSelector(gui.Dialog):
 
         def handle_submit(arg):
             print "Submit button pressed"
-            self.mainGui.engine.programNames = self.programNames
-            self.mainGui.engine.programPaths = self.programPaths
+            self.mainGui.programNames = self.programNames
+            self.mainGui.programPaths = self.programPaths
             #self.mainGui.engine.
             self.close(self)
         
@@ -130,14 +124,15 @@ class MainGui(gui.Desktop):
     # The game engine
     engine = None
     display = None
-    
     opened = False
 
     def __init__(self, pygameDisplay, screenSize, menuHeight):
         self.menuHeight = menuHeight
         self.display = pygameDisplay
         gui.Desktop.__init__(self)
-        
+        self.coreSize = 3000
+        self.programNames = []
+        self.programPaths = []
         self.updateSize(screenSize)#Also sets up menu
         
     def open(self, dlg, pos=None):
@@ -191,7 +186,6 @@ class MainGui(gui.Desktop):
 
     def setup_menu(self): #Init the game menu
         
-        
         table = gui.Table(vpadding=5, hpadding=2)
         table.tr()
        
@@ -205,15 +199,14 @@ class MainGui(gui.Desktop):
         pauseResumeBtn = gui.Button("Pause/Resume Processor Clock", height=50)
         pauseResumeBtn.connect(gui.CLICK, pause_cb)
        
-
         # Add a slider for adjusting the game clock speed
         speedSelTable = gui.Table()
 
         timeLabel = gui.Label("Tick Speed")
-
+        
         speedSelTable.tr()
         speedSelTable.td(timeLabel)
-
+        
         slider = gui.HSlider(value=23,min=0,max=100,size=20,height=16,width=120)
 
         def update_speed():
@@ -230,14 +223,32 @@ class MainGui(gui.Desktop):
         loadProgsBtn = gui.Button("Load Programs", height=50)
         loadProgsBtn.connect(gui.CLICK,programSelectorDialog.open,None)
         
+        def start_sim(arg):
+            self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
+            #table.remove(startBtn)
+            #table.td(resetBtn, 0, 0)
+            #self.menuArea.add(table, 0, 0)
+            
+        #def reset_sim(arg):
+        #    self.engine.resetGame()
+        #    table.remove(resetBtn)
+        #    table.td(startBtn, 0, 0)
+        #    self.menuArea.add(table, 0, 0)
+        
+        startBtn = gui.Button("Start", height=50)
+        startBtn.connect(gui.CLICK,start_sim,None)
+        
+        #resetBtn = gui.Button("Reset", height=50)
+        #resetBtn.connect(gui.CLICK,reset_sim,None)
+        
         #table.td(loadFileTable)
+        table.td(startBtn, height=50)
         table.td(loadProgsBtn)
         table.td(pauseResumeBtn)
         table.td(speedSelTable)
         
         self.menuArea.add(table, 0, 0)
         
-
     def get_render_area(self):
         return self.gameArea.get_abs_rect()
     
