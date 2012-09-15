@@ -24,7 +24,7 @@ class VirtualCore:
     def load(self, position, code):
         codeLength = len(code)
         self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]
-        self.playerCounters.append(PlayerProgramCounter(self.IDcount,position))
+        self.playerCounters.append(PlayerProgramCounter(self, self.IDcount,position))
         self.IDcount +=1
     def getChanges(self):
         print "Im a blue monkey"
@@ -34,7 +34,6 @@ class VirtualCore:
           
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
         if(len(self.playerCounters) == 0):
-            print "Tick called with no players"
             return None
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
