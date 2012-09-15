@@ -103,7 +103,7 @@ class VirtualCore:
             destination = self.getLocation(instruction.arguments[0], instructionLocation)
             if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
-            self.playerCounters[self.currentPlayer].advancePointer()
+            self.playerCounters[self.currentPlayer].advancePointer(self.size)
             self.playerCounters[self.currentPlayer].spawnThead(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
             
