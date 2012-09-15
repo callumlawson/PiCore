@@ -165,5 +165,5 @@ class GameEngine(object):
                 updates += lst
             pygame.display.update(updates)
             
-            pygame.time.wait(1000)
+            pygame.time.wait(50)
 

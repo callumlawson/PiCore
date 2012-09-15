@@ -27,7 +27,7 @@ class VirtualCore:
         self.playerCounters.append(PlayerProgramCounter(self, self.IDcount,position))
         self.IDcount +=1
     def getChanges(self):
-        print "Im a blue monkey"
+        #print "Im a blue monkey"
         return self.changesList
     def clearChanges(self):
         self.changesList = []  
