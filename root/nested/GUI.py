@@ -109,7 +109,7 @@ class ProgramSelector(gui.Dialog):
         listContainer.add(button, 20, 90)
         button.connect(gui.CLICK, clear_list, None)
         
-        button = gui.Button("Submit", width=150)
+        button = gui.Button("Load", width=150)
         listContainer.add(button, 20, 120)
         button.connect(gui.CLICK, handle_submit , None)
         
