@@ -34,6 +34,9 @@ class GameEngine(object):
         self.app = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight)
         self.app.engine = self
         
+        self.programNames = []
+        self.programPaths = []
+        
         #Parser
         parser = Parser()
         testCode = parser.processFile("demoCode.txt")

@@ -35,11 +35,12 @@ class DrawingArea(gui.Widget): #render the gameState
         
 class ProgramSelector(gui.Dialog):
      
-    def __init__(self,**params):
+     
+    def __init__(self,MainGui):
         title = gui.Label("PiCore Program Selector")
-        self._count = 1
         self.programNames = []
         self.programPaths = []
+        self.mainGui = MainGui
         
         def clear_list(arg):
             my_list.clear()
@@ -52,20 +53,29 @@ class ProgramSelector(gui.Dialog):
             v = my_list.value
             if v:
                 item = v
-                print item
+                
+                for i in my_list.items:
+                    if i.value == item: theItem = i
+                
                 my_list.remove(item)
                 my_list.resize()
                 my_list.repaint()
-                #self.programNames.pop(item-1)
-                #self.programPaths.pop(item-1)
+                
+                self.programNames.remove(theItem.widget.value)
+                self.programPaths.remove(item)
+                
                 print self.programNames
                 print self.programPaths
 
-        def add_list_item(arg):
-            my_list.add(arg,value = self._count)
+        def add_list_item(arg,path):
+            my_list.add(arg,value = path)
+            self.programNames.append(arg)
+            self.programPaths.append(path)
             my_list.resize()
             my_list.repaint()
-            self._count += 1
+            
+            print self.programNames
+            print self.programPaths
             
         ##Open File Dialog - to load user programs
         def open_file_browser(arg):
@@ -77,12 +87,17 @@ class ProgramSelector(gui.Dialog):
             if dlg.value: 
                 #input_file.value = dlg.value 
                 progName = dlg.input_file.value.split(".")[0]
-                add_list_item(progName)
-                self.programNames.append(progName)
-                self.programPaths.append(dlg.value)
-                print self.programNames
-                print self.programPaths
+                
+                if not progName == "":
+                    add_list_item(progName,dlg.value)              
 
+        def handle_submit(arg):
+            print "Submit button pressed"
+            self.mainGui.engine.programNames = self.programNames
+            self.mainGui.engine.programPaths = self.programPaths
+            #self.mainGui.engine.
+            self.close(self)
+        
         #List selector
         listContainer = gui.Container(width=400, height=150)
         my_list = gui.List(width= 200, height=100)  
@@ -92,15 +107,20 @@ class ProgramSelector(gui.Dialog):
         listContainer.add(button, 20, 30)
         button.connect(gui.CLICK, open_file_browser, None)
 
-        button = gui.Button("remove selected", width=150)
+        button = gui.Button("Remove selected", width=150)
         listContainer.add(button, 20, 60)
         button.connect(gui.CLICK, remove_list_item, None)
 
-        button = gui.Button("clear", width=150)
+        button = gui.Button("Clear", width=150)
         listContainer.add(button, 20, 90)
         button.connect(gui.CLICK, clear_list, None)
         
+        button = gui.Button("Submit", width=150)
+        listContainer.add(button, 20, 120)
+        button.connect(gui.CLICK, handle_submit , None)
+        
         gui.Dialog.__init__(self,title,listContainer)
+              
 
 class MainGui(gui.Desktop):
     #gameAreaHeight = 550
@@ -118,7 +138,7 @@ class MainGui(gui.Desktop):
         self.display = pygameDisplay
         gui.Desktop.__init__(self)
         
-        self.updateSize(screenSize)
+        self.updateSize(screenSize)#Also sets up menu
         
     def open(self, dlg, pos=None):
         # Gray out the game area before showing the popup
@@ -170,6 +190,8 @@ class MainGui(gui.Desktop):
         self.init(table, self.display)
 
     def setup_menu(self): #Init the game menu
+        
+        
         table = gui.Table(vpadding=5, hpadding=2)
         table.tr()
        
@@ -203,7 +225,8 @@ class MainGui(gui.Desktop):
         speedSelTable.td(slider)
         
         #Program selector button
-        programSelectorDialog = ProgramSelector()
+        programSelectorDialog = ProgramSelector(self)
+      
         loadProgsBtn = gui.Button("Load Programs", height=50)
         loadProgsBtn.connect(gui.CLICK,programSelectorDialog.open,None)
         
