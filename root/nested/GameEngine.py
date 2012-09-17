@@ -16,7 +16,7 @@ class GameEngine(object):
     
     #Global - I will kill you if you add statics
     padding = 3
-    colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255))
+    colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255),pygame.Color(255,255,0),pygame.Color(255,0,255))
     
     def __init__(self, pygameDisplay):
         
@@ -68,7 +68,6 @@ class GameEngine(object):
         self.clock.resume()
         
     def doResize(self):
-        
         self.numberInX = math.ceil(math.sqrt((self.screenWidth * self.virtualCore.size)/(self.screenHeight-self.menuHeight))) #ratio of x rounded up
         self.numberInY = math.ceil(self.virtualCore.size/self.numberInX) # and so in Y
         
@@ -126,48 +125,48 @@ class GameEngine(object):
         # Main program loop
         done = False
         while not done:
-            self.rect = self.app.get_render_area()                       
-            #Update the game
+            startTime = self.clock.get_time() #Time since last loop
+                     
+            #Update the game state
             if not self.clock.paused and self.virtualCore != None: 
                 ret = self.virtualCore.tick()
                 if(ret != None): #player out
                     print "Player " + str(ret.playerID) + " who loaded " + self.programNames[ret.playerID] + " lost. There are " + str(ret.playersLeft) + " players remaining"
-            # Process events
-            for event in pygame.event.get():
-                if (event.type == pygame.QUIT or 
-                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                    done = True 
-                if event.type == pygame.VIDEORESIZE:
-                    self.display = pygame.display.set_mode(event.dict['size'],pygame.RESIZABLE)
-                    self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
-                    self.screenWidth = event.dict['size'][0]
-                    self.screenHeight = event.dict['size'][1]
-                    self.app.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
-                    pygame.display.update()
-                    print self.screenWidth,self.screenHeight
-                    self.app.event(event)
-                    self.doResize()
-                else:
-                    # Pass the event off to pgu
-                    self.app.event(event)
                     
-            # Render the game
-            updates = []
-            self.display.set_clip(self.rect)
-            lst = self.partRender()
-            if (lst):
-                updates += lst
+            #Poll for events and render the screen AFAP until time for next tick
+            while (not done) and ((self.clock.get_time() - startTime) < 0.1):   
+                # Process events
                 
-            self.display.set_clip()
-
-            # Cap it at 30fps
-            #self.clock.tick(20)
-
-            # Give pgu a chance to update the display (menu)
-            lst = self.app.update()
-            if (lst):
-                updates += lst
-            pygame.display.update(updates)
-            
-            pygame.time.wait(30)
-
+                for event in pygame.event.get():
+                    if (event.type == pygame.QUIT or 
+                        event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                        done = True 
+                    if event.type == pygame.VIDEORESIZE:
+                        self.display = pygame.display.set_mode(event.dict['size'],pygame.RESIZABLE)
+                        self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
+                        self.screenWidth = event.dict['size'][0]
+                        self.screenHeight = event.dict['size'][1]
+                        self.app.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
+                        pygame.display.update()
+                        print self.screenWidth,self.screenHeight
+                        self.app.event(event)
+                        self.doResize()
+                    else:
+                        # Pass the event off to pgu
+                        self.app.event(event)
+                    
+                self.rect = self.app.get_render_area()              
+                # Render the game
+                updates = []
+                self.display.set_clip(self.rect)
+                lst = self.partRender()
+                if (lst):
+                    updates += lst
+                    
+                self.display.set_clip()
+                
+                # Give pgu a chance to update the display (menu)
+                lst = self.app.update()
+                if (lst):
+                    updates += lst
+                pygame.display.update(updates)

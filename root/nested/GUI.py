@@ -127,6 +127,7 @@ class MainGui(gui.Desktop):
     opened = False
 
     def __init__(self, pygameDisplay, screenSize, menuHeight,initCoreSize):
+        self.sliderValue = 25
         self.menuHeight = menuHeight
         self.display = pygameDisplay
         gui.Desktop.__init__(self)
@@ -134,6 +135,7 @@ class MainGui(gui.Desktop):
         self.programNames = []
         self.programPaths = []
         self.updateSize(screenSize)#Also sets up menu
+        
         
     def open(self, dlg, pos=None):
         # Gray out the game area before showing the popup
@@ -207,11 +209,14 @@ class MainGui(gui.Desktop):
         speedSelTable.tr()
         speedSelTable.td(timeLabel)
         
-        slider = gui.HSlider(value=23,min=0,max=100,size=20,height=16,width=120)
+        slider = gui.HSlider(value=self.sliderValue,min=0,max=100,size=20,height=16,width=120)
 
         def update_speed():
-            self.engine.clock.set_speed(slider.value/10.0)
-
+            self.sliderValue = slider.value
+            if slider.value != 100:
+                self.engine.clock.set_speed(self.sliderValue/10.0)
+            else: self.engine.clock.set_speed(10000)
+            
         slider.connect(gui.CHANGE, update_speed)
 
         speedSelTable.tr()
