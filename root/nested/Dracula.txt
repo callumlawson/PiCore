@@ -15,7 +15,7 @@ jmp @mode2				//keep on bombing data
 
 //zis is data for bombing
 
-bomb: jmp @11 				//instruction to bomb with (starts with difference from mode1 to trap)
+bomb: jmp @10 				//instruction to bomb with (starts with difference from mode1 to trap)
 location: data 15 			//destination to bomb
 step: data 10				//bomb step incredments TODO: Use $1 to calculate
 
