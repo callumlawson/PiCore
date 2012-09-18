@@ -14,4 +14,7 @@ class Instruction:
     def toString(self):
         return self.name + " " + " ".join(map(str, self.arguments))
     def clone(self):
-        return Instruction(self.name,self.arguments,self.lastMod)
+        newArgs = []
+        for oldArg in self.arguments:
+            newArgs.append((oldArg[0],oldArg[1]))
+        return Instruction(self.name,newArgs,self.lastMod)
