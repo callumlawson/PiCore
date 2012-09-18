@@ -4,17 +4,17 @@ Created on 7 Sep 2012
 '''
 from Instruction import Instruction
 
-#Will return false if there is an error in the users code - the program otherwise.
+#Will return false if there is an checkError in the users code - the program otherwise.
 
 class Parser:
     
     instuctionArgumentNumbers = {'dat':1,'mov':2,'jmp':1,'jpi':3,'add':3,'sub':3,'mlt':3,'div':3,'bch':1,'nop':0} #TODO
     
     def __init__(self,engine):  #Path of file to be parsed
-        self.engine = engine
         print "Parser Created" #TODO
+        self.engine = engine
       
-    def processInstruction(self, rawInstruction):
+    def processInstruction(self, rawInstruction, lineNumber):
         token = rawInstruction.lower() #Put everything to lower case  
         if token == "data" or token == "dat": return "dat"
         elif token == "move" or token == "mov": return "mov"
@@ -26,18 +26,17 @@ class Parser:
         elif token == "divide" or token == "div": return "div"
         elif token == "branch" or token == "bch": return "bch"
         elif token == "noop" or token == "nop": return "nop"
-        else: self.error("Non recognised instuction: " + token)
+        else:
+            self.errorMessages.append("line: " + str(lineNumber+1) + " Not a recognised instruction: " + token)
+            return False        
         
     def checkInstruction(self,Instruction): #Check that the Instruction has right number of arguments/ is otherwise valid
         pass #TODO                       #User should be given feedback
-
-    def error(self, message):
-        self.engine.showError(message)
-        return False
         
     def processFile(self,path):
         program = []   
         labelDict = {}                                             #An empty list to hold the users program
+        self.errorMessages = [] #Record of errors generated if any.
         
         def replaceLables(arg,currentlineNumber):
             if labelDict.has_key(arg):
@@ -77,17 +76,19 @@ class Parser:
             if len(tokens) != 0:                                 #Do not continue to parse if the line is empty.
                 instructionArguments = []
                                                    
-                instruction = self.processInstruction(tokens[0]) #The instruction is the first token changed to a lower case 3letter code.
-                    #TODO abort if not recognised... do in error?
-                arguments = tokens[1:]                           #The rest of the tokens are arguments
-                              
-                for argument in arguments:                       #for each argument of the instruction (1-3 currently)
-                    if argument[0] == "@" or argument[0] == "#" or  argument[0] == "$":            
-                        instructionArguments.append((argument[0],replaceLables(argument[1:],lineNumber)))
-                    else: 
-                        instructionArguments.append(("",replaceLables(argument[0:],lineNumber)))
-                    
-                program.append(Instruction(instruction,instructionArguments))
+                instruction = self.processInstruction(tokens[0],lineNumber) #The instruction is the first token changed to a lower case 3letter code.
+                    #TODO abort if not recognised... do in checkError?
+                if not instruction == False:
+                    arguments = tokens[1:]                           #The rest of the tokens are arguments
+                                  
+                    for argument in arguments:                       #for each argument of the instruction (1-3 currently)
+                        if argument[0] == "@" or argument[0] == "#" or  argument[0] == "$":            
+                            instructionArguments.append((argument[0],replaceLables(argument[1:],lineNumber)))
+                        else: 
+                            instructionArguments.append(("",replaceLables(argument[0:],lineNumber)))
+                        
+                    program.append(Instruction(instruction,instructionArguments))
+                
                 lineNumber += 1
                
                   
@@ -98,7 +99,14 @@ class Parser:
             print intr.toString()
         
         file.close()
-        return program
+        
+        if self.errorMessages != []: #If there are errors record them and return false
+            self.engine.errorMessages.append("Program name: " + (((path.split("\\").pop()).split("."))[0]))
+            for message in self.errorMessages:
+                self.engine.errorMessages.append(message)
+            self.engine.errorMessages.append("Program will not run")
+            return False
+        else: return program
         
 
 

@@ -35,23 +35,26 @@ class DrawingArea(gui.Widget): #render the gameState
         
 class ErrorDialog(gui.Dialog):
     
-    def __init__(self,errorMessage):
+    def __init__(self,errorMessages):
+        font = pygame.font.SysFont("", 22)
         title = gui.Label("Error")
+        title.set_font(font)
     
-        container = gui.Container(width=400, height=130)
-    
-        space = title.style.font.size(" ")
-        doc = gui.Document(width=400, height = 90)
-        doc.block(align=-1)
-        for word in errorMessage.split(" "):
-            doc.add(gui.Label(word))
-            doc.space(space)
-        doc.br(space[1])
-        container.add(doc,0,20)
+        container = gui.Container(width=400,height =180)
         
-        button = gui.Button("Close", width=100)
-        container.add(button,150,100)
-        button.connect(gui.CLICK, self.close(), None)
+        doc = gui.Document(width=380)
+        space = title.style.font.size(" ")
+        
+        doc.block(align=-1)
+        
+        for message in errorMessages:
+            messageLabel = gui.Label(message)
+            messageLabel.set_font(font)
+            doc.add(messageLabel)
+            #doc.space(space)
+            doc.br(space[1])
+            
+        container.add(gui.ScrollArea(doc,390,160),10,10)
         
         gui.Dialog.__init__(self,title,container)
         
@@ -179,6 +182,7 @@ class MainGui(gui.Desktop):
         pygame.display.set_mode((self.engine.screenWidth,self.engine.screenHeight+1))
         
         gui.Desktop.open(self, dlg, pos)
+        
         while (dlg.is_open()):#
             for event in pygame.event.get():
                 self.event(event)
@@ -253,8 +257,6 @@ class MainGui(gui.Desktop):
         def start_sim(arg):
             self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
             
-        
-            
         startBtn = gui.Button("Start", height=50)
         startBtn.connect(gui.CLICK,start_sim,None)
         
@@ -266,8 +268,8 @@ class MainGui(gui.Desktop):
         
         self.menuArea.add(table, 0, 0)
         
-    def open_error_dialog(self, message):
-            errorDialog = ErrorDialog(message)
+    def open_error_dialog(self,messages):
+            errorDialog = ErrorDialog(messages)
             errorDialog.open() 
         
     def get_render_area(self):

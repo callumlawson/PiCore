@@ -8,7 +8,6 @@ add @location @step @location 		//change destination for next bomb
 jpi @mode1 @trap 0			//keep bombing jumps if the trap has not been activated
 
 //zis is ze second mode, data bombs
-
 mode2: mov 10 @location			//reset bombing point
 mov 33 #location			//bomb data at 33 at bombing point
 add @location @step @location		//change dest for bext bomb
