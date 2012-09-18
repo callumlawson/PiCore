@@ -33,6 +33,28 @@ class DrawingArea(gui.Widget): #render the gameState
         pygameDisplay = pygame.display.get_surface()
         self.imageBuffer.blit(pygameDisplay, self.get_abs_rect())
         
+class ErrorDialog(gui.Dialog):
+    
+    def __init__(self,errorMessage):
+        title = gui.Label("Error")
+    
+        container = gui.Container(width=400, height=130)
+    
+        space = title.style.font.size(" ")
+        doc = gui.Document(width=400, height = 90)
+        doc.block(align=-1)
+        for word in errorMessage.split(" "):
+            doc.add(gui.Label(word))
+            doc.space(space)
+        doc.br(space[1])
+        container.add(doc,0,20)
+        
+        button = gui.Button("Close", width=100)
+        container.add(button,150,100)
+        button.connect(gui.CLICK, self.close(), None)
+        
+        gui.Dialog.__init__(self,title,container)
+        
 class ProgramSelector(gui.Dialog):
      
     def __init__(self,MainGui):
@@ -94,23 +116,23 @@ class ProgramSelector(gui.Dialog):
         
         #List selector
         listContainer = gui.Container(width=400, height=150)
-        my_list = gui.List(width= 200, height=100)  
-        listContainer.add(my_list, 220, 20) 
+        my_list = gui.List(width= 210, height=125)  
+        listContainer.add(my_list, 185, 10) 
          
         button = gui.Button("Add program", width=150)
-        listContainer.add(button, 20, 30)
+        listContainer.add(button, 10, 20)
         button.connect(gui.CLICK, open_file_browser, None)
 
         button = gui.Button("Remove selected", width=150)
-        listContainer.add(button, 20, 60)
+        listContainer.add(button, 10, 50)
         button.connect(gui.CLICK, remove_list_item, None)
 
         button = gui.Button("Clear", width=150)
-        listContainer.add(button, 20, 90)
+        listContainer.add(button, 10, 80)
         button.connect(gui.CLICK, clear_list, None)
         
         button = gui.Button("Load", width=150)
-        listContainer.add(button, 20, 120)
+        listContainer.add(button, 10, 110)
         button.connect(gui.CLICK, handle_submit , None)
         
         gui.Dialog.__init__(self,title,listContainer)
@@ -231,21 +253,10 @@ class MainGui(gui.Desktop):
         def start_sim(arg):
             self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
             
-            #table.remove(startBtn)
-            #table.td(resetBtn, 0, 0)
-            #self.menuArea.add(table, 0, 0)
-            
-        #def reset_sim(arg):
-        #    self.engine.resetGame()
-        #    table.remove(resetBtn)
-        #    table.td(startBtn, 0, 0)
-        #    self.menuArea.add(table, 0, 0)
         
+            
         startBtn = gui.Button("Start", height=50)
         startBtn.connect(gui.CLICK,start_sim,None)
-        
-        #resetBtn = gui.Button("Reset", height=50)
-        #resetBtn.connect(gui.CLICK,reset_sim,None)
         
         #table.td(loadFileTable)
         table.td(startBtn, height=50)
@@ -254,6 +265,10 @@ class MainGui(gui.Desktop):
         table.td(speedSelTable)
         
         self.menuArea.add(table, 0, 0)
+        
+    def open_error_dialog(self, message):
+            errorDialog = ErrorDialog(message)
+            errorDialog.open() 
         
     def get_render_area(self):
         return self.gameArea.get_abs_rect()

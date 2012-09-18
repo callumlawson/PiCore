@@ -30,10 +30,10 @@ class GameEngine(object):
         self.drawArea = pygame.Surface((self.screenWidth,self.screenHeight)).convert_alpha()
         self.drawArea.fill((120,120,120)) 
         
-        self.app = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight,self.initCoreSize)
-        self.app.engine = self
+        self.gui = MainGui(self.display,(self.screenWidth,self.screenHeight),self.menuHeight,self.initCoreSize)
+        self.gui.engine = self
         
-        self.rect = self.app.get_render_area()
+        self.rect = self.gui.get_render_area()
         
         self.startGame(self.initCoreSize, [], [])
         
@@ -46,7 +46,7 @@ class GameEngine(object):
         self.programNames = programNames
         self.programPaths = programPaths
         programs = []
-        parser = Parser()
+        parser = Parser(self)
         for path in self.programPaths:
             programs.append(parser.processFile(path))
         self.virtualCore = VirtualCore(coreSize)
@@ -56,6 +56,8 @@ class GameEngine(object):
             self.virtualCore.load(pos, program)
             c +=1      
         self.doResize()
+        
+        
     
     # Pause the game clock    
     def pause(self):
@@ -66,6 +68,9 @@ class GameEngine(object):
     def resume(self):
         print "resume"
         self.clock.resume()
+        
+    def showError(self,message):
+        self.gui.open_error_dialog(message)
         
     def doResize(self):
         self.numberInX = math.ceil(math.sqrt((self.screenWidth * self.virtualCore.size)/(self.screenHeight-self.menuHeight))) #ratio of x rounded up
@@ -117,7 +122,7 @@ class GameEngine(object):
                 pygame.draw.rect(self.drawArea,pygame.Color(255,255,0) ,(x*(self.squareSize), y*(self.squareSize),self.squareSize+self.padding,self.squareSize+self.padding), self.padding/2)
                 
     def run(self):
-        self.app.update()
+        self.gui.update()
         pygame.display.flip()
         self.font = pygame.font.SysFont("", 16)
         self.clock = timer.Clock() #pygame.time.Clock()
@@ -146,16 +151,16 @@ class GameEngine(object):
                         self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
                         self.screenWidth = event.dict['size'][0]
                         self.screenHeight = event.dict['size'][1]
-                        self.app.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
+                        self.gui.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
                         pygame.display.update()
                         print self.screenWidth,self.screenHeight
-                        self.app.event(event)
+                        self.gui.event(event)
                         self.doResize()
                     else:
                         # Pass the event off to pgu
-                        self.app.event(event)
+                        self.gui.event(event)
                     
-                self.rect = self.app.get_render_area()              
+                self.rect = self.gui.get_render_area()              
                 # Render the game
                 updates = []
                 self.display.set_clip(self.rect)
@@ -166,7 +171,7 @@ class GameEngine(object):
                 self.display.set_clip()
                 
                 # Give pgu a chance to update the display (menu)
-                lst = self.app.update()
+                lst = self.gui.update()
                 if (lst):
                     updates += lst
                 pygame.display.update(updates)

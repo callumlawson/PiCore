@@ -4,11 +4,14 @@ Created on 7 Sep 2012
 '''
 from Instruction import Instruction
 
+#Will return false if there is an error in the users code - the program otherwise.
+
 class Parser:
     
     instuctionArgumentNumbers = {'dat':1,'mov':2,'jmp':1,'jpi':3,'add':3,'sub':3,'mlt':3,'div':3,'bch':1,'nop':0} #TODO
     
-    def __init__(self):  #Path of file to be parsed
+    def __init__(self,engine):  #Path of file to be parsed
+        self.engine = engine
         print "Parser Created" #TODO
       
     def processInstruction(self, rawInstruction):
@@ -29,8 +32,8 @@ class Parser:
         pass #TODO                       #User should be given feedback
 
     def error(self, message):
-        print message
-        pass #TODO
+        self.engine.showError(message)
+        return False
         
     def processFile(self,path):
         program = []   
@@ -86,6 +89,7 @@ class Parser:
                     
                 program.append(Instruction(instruction,instructionArguments))
                 lineNumber += 1
+               
                   
         #print program
         #print labelDict
