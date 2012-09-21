@@ -109,6 +109,7 @@ class GameEngine(object):
         font = pygame.font.Font(None, 25)
         renderedText = font.render(dispText, True, pygame.Color(255,255,255))
         self.drawArea.blit(renderedText,(0,self.screenHeight-self.menuHeight-self.infoHeight))
+        
     def partRender(self):
         self.infoRender()
         for index in self.virtualCore.getChanges():

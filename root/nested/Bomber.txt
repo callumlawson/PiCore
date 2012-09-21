@@ -1,6 +1,6 @@
 //Hello this is demo code
-movea @4 #4
+move @4 #4
 add @2 @3 @3
-jufmp @-2
-data 23 
+jufmp @-2 @0 @6
+data 23 87
 data 12 /This is another comment in the line!

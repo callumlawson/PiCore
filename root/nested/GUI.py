@@ -5,7 +5,6 @@ Created on 9 Sep 2012
 '''
 
 #!/usr/bin/env python
-
 # self is not needed if you have PGU installed
 import sys
 sys.path.insert(0, "..")
@@ -51,10 +50,9 @@ class ErrorDialog(gui.Dialog):
             messageLabel = gui.Label(message)
             messageLabel.set_font(font)
             doc.add(messageLabel)
-            #doc.space(space)
             doc.br(space[1])
             
-        container.add(gui.ScrollArea(doc,390,160),10,10)
+        container.add(gui.ScrollArea(doc,390,160),5,10)
         
         gui.Dialog.__init__(self,title,container)
         
@@ -94,8 +92,7 @@ class ProgramSelector(gui.Dialog):
             self.programPaths.append(path)
             my_list.resize()
             my_list.repaint()
-          
-            
+           
         ##Open File Dialog - to load user programs
         def open_file_browser(arg):
             fileDialog = gui.FileDialog()

@@ -8,7 +8,7 @@ from Instruction import Instruction
 
 class Parser:
     
-    instuctionArgumentNumbers = {'dat':1,'mov':2,'jmp':1,'jpi':3,'add':3,'sub':3,'mlt':3,'div':3,'bch':1,'nop':0} #TODO
+    instuctionArgNums = {'dat':1,'mov':2,'jmp':1,'jpi':3,'add':3,'sub':3,'mlt':3,'div':3,'bch':1,'nop':0, 'mod':3, 'nnd':3,'orr':3,'xor':3} #TODO
     
     def __init__(self,engine):  #Path of file to be parsed
         print "Parser Created" #TODO
@@ -20,18 +20,26 @@ class Parser:
         elif token == "move" or token == "mov": return "mov"
         elif token == "jump" or token == "jmp": return "jmp"
         elif token == "jumpif" or token == "jpi": return "jpi"
-        elif token == "add": return "add"
         elif token == "subtract" or token == "sub": return "sub"
         elif token == "multiply" or token == "mlt": return "mlt"
         elif token == "divide" or token == "div": return "div"
         elif token == "branch" or token == "bch": return "bch"
         elif token == "noop" or token == "nop": return "nop"
+        elif token == "mod" : return "mod"
+        elif token == "nand" : return "nnd"
+        elif token == "or" : return "or"
+        elif token == "xor": return "xor"
+        elif token == "add": return "add"
         else:
-            self.errorMessages.append("line: " + str(lineNumber+1) + " Not a recognised instruction: " + token)
+            self.errorMessages.append("Line: " + str(lineNumber+1) + " Not a recognised instruction: " + token)
             return False        
         
-    def checkInstruction(self,Instruction): #Check that the Instruction has right number of arguments/ is otherwise valid
-        pass #TODO                       #User should be given feedback
+    def checkInstruction(self,instruction,args,lineNumber): #Check that the Instruction has right number of arguments/ is otherwise valid  #User should be given feedback
+        if not self.instuctionArgNums[instruction] == len(args):
+            self.errorMessages.append("Line: " + str(lineNumber+1) + " Instruction: " + instruction + " has wrong num of args")
+            return False
+        else: return True
+                
         
     def processFile(self,path):
         program = []   
@@ -77,7 +85,7 @@ class Parser:
                 instructionArguments = []
                                                    
                 instruction = self.processInstruction(tokens[0],lineNumber) #The instruction is the first token changed to a lower case 3letter code.
-                    #TODO abort if not recognised... do in checkError?
+                
                 if not instruction == False:
                     arguments = tokens[1:]                           #The rest of the tokens are arguments
                                   
@@ -86,12 +94,11 @@ class Parser:
                             instructionArguments.append((argument[0],replaceLables(argument[1:],lineNumber)))
                         else: 
                             instructionArguments.append(("",replaceLables(argument[0:],lineNumber)))
-                        
-                    program.append(Instruction(instruction,instructionArguments))
+                    if(self.checkInstruction(instruction, instructionArguments,lineNumber)):
+                        program.append(Instruction(instruction,instructionArguments))
                 
                 lineNumber += 1
-               
-                  
+                 
         #print program
         #print labelDict
         
@@ -108,7 +115,6 @@ class Parser:
             return False
         else: return program
         
-
 
         
         
