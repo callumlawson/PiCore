@@ -20,13 +20,17 @@ class VirtualCore:
         self.memory = [Instruction() for j in range(memorySize)]
         self.size = memorySize
         self.currentPlayer = 0
-        self.ROM = [memorySize,0,0,0]
+        self.ROM = [memorySize-1,0,0,0]
         self.changesList = []
     def load(self, position, code):
         codeLength = len(code)
         self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]
         self.playerCounters.append(PlayerProgramCounter(self, self.IDcount,position))
         self.IDcount +=1
+    def modValues(self):
+        for instruc in self.memory:
+            for arg in instruc.arguments:
+                arg[1] = (arg[0],arg[1]%self.size)
     def getChanges(self):
         #print "Im a blue monkey"
         return self.changesList
@@ -65,6 +69,7 @@ class VirtualCore:
             if(location == -1): #invalid destination, kills thread
                 return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.memory[location] = thingToMove.clone()
+            self.memory[location].lastMod = self.playerCounters[self.currentPlayer].ID
             self.playerCounters[self.currentPlayer].advanceBoth()
             
         elif(instruction.name == "jmp"): #jump program counter to a point in memory

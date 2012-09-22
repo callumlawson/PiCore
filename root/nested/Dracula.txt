@@ -1,25 +1,25 @@
-//Zis is ze vampire!
+/Zis is ze vampire!
 
-//zis is mode vun of operation(get ze buggers to jump into ze trap)
+/zis is mode vun of operation(get ze buggers to jump into ze trap)
 
-mode1: sub @bomb @location @bomb 	//make bomb point to the trap
-mov @bomb #location 			//move a jump ahead of self
-add @location @step @location 		//change destination for next bomb
-jpi @mode1 @trap 0			//keep bombing jumps if the trap has not been activated
+mode1: sub @bomb @location @bomb 	/make bomb point to the trap
+mov @bomb #location 			/move a jump ahead of self
+add @location @step @location 		/change destination for next bomb
+jpi @mode1 @trap 0			/keep bombing jumps if the trap has not been activated
 
-//zis is ze second mode, data bombs
-mode2: mov 10 @location			//reset bombing point
-mov 33 #location			//bomb data at 33 at bombing point
-add @location @step @location		//change dest for bext bomb
-jmp @mode2				//keep on bombing data
+/zis is ze second mode, data bombs
+mov 10 @location			/reset bombing point
+mode2: mov 33 #location			/bomb data at 33 at bombing point
+add @location @step @location		/change dest for bext bomb
+jmp @mode2				/keep on bombing data
 
-//zis is data for bombing
+/zis is data for bombing
 
-bomb: jmp @10 				//instruction to bomb with (starts with difference from mode1 to trap)
-location: data 15 			//destination to bomb
-step: data 10				//bomb step incredments TODO: Use $1 to calculate
+bomb: jmp @10 				/instruction to bomb with (starts with difference from mode1 to trap)
+location: data 15 			/destination to bomb
+step: data 10				/bomb step incredments TODO: Use $1 to calculate
 
-//zis is ze deadly life sucking loop
+/zis is ze deadly life sucking loop
 
 trap: add @0 1 @0
 bch @0
