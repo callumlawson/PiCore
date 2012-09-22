@@ -27,6 +27,6 @@ step: data 0				/gap between bombs
 
 /its a trap!
 
-trap: add @0 1 @0
+trap: add 0 1 @0
 killPoint: bch @0
 jmp @-1
