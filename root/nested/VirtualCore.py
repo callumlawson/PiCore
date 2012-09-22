@@ -15,6 +15,7 @@ class PlayerGone:
 class VirtualCore:
     # ROM = [memSize,processes,threads,clockCount]
     def __init__(self, memorySize):
+        self.threadLimit = 32
         self.playerCounters = []
         self.IDcount = 0
         self.memory = [Instruction() for j in range(memorySize)]
@@ -29,8 +30,10 @@ class VirtualCore:
         self.IDcount +=1
     def modValues(self):
         for instruc in self.memory:
+            amend = []
             for arg in instruc.arguments:
-                arg[1] = (arg[0],arg[1]%self.size)
+                amend.append((arg[0],int(arg[1])%self.size))
+            instruc.arguments = amend  
     def getChanges(self):
         #print "Im a blue monkey"
         return self.changesList
@@ -88,7 +91,7 @@ class VirtualCore:
         elif(instruction.name == "mlt"): # add
             return self.mathOperation(instruction, instructionLocation, self.multOperation) 
             
-        elif(instruction.name == "dvd"): # add
+        elif(instruction.name == "div"): # add
             return self.mathOperation(instruction, instructionLocation, self.divOperation) 
         
         elif(instruction.name == "mod"): # add
@@ -124,7 +127,8 @@ class VirtualCore:
             if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.playerCounters[self.currentPlayer].advancePointer()
-            self.playerCounters[self.currentPlayer].spawnThread(destination)
+            if(len(self.playerCounters[self.currentPlayer].counters) == self.threadLimit):
+                self.playerCounters[self.currentPlayer].spawnThread(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
             
         return False
@@ -146,7 +150,7 @@ class VirtualCore:
     def multOperation(self, op1, op2):
         return op1 * op2
     def divOperation(self, op1, op2):
-        return math.floor(op1 / op2)
+        return int(math.floor(op1 / op2))
     def modOperation(self, op1, op2):
         return op1%op2
     def andOperation(self, op1, op2):
@@ -159,7 +163,7 @@ class VirtualCore:
         return self.boolToInt((op1 == 0) and (op2 == 0))
     def getInstruction(self, argumentTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(argumentTuple[0] == "$"):
-            return Instruction("dat", argumentTuple[1]%len(self.ROM))
+            return Instruction("dat", [("",self.ROM[int(argumentTuple[1])])])
         atLocation = self.getLocation(argumentTuple, relativePoint)
         if(atLocation == -1):
             return Instruction("dat", [argumentTuple])

@@ -61,7 +61,8 @@ class GameEngine(object):
         for program in programs:
             pos = int((c*coreSize)/len(programs) + random.randint(0, int(1.5 * len(program))))
             self.virtualCore.load(pos, program)
-            c +=1      
+            c +=1
+        self.virtualCore.modValues()      
         self.doResize()
     
     # Pause the game clock    
