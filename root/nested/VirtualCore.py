@@ -161,8 +161,7 @@ class VirtualCore:
             if(len(self.playerCounters[self.currentPlayer].counters) != self.threadLimit):
                 self.playerCounters[self.currentPlayer].spawnThread(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
-
-                
+                   
         return False
     
     def mathOperation(self, instruction, instructionLocation, op):
