@@ -12,16 +12,22 @@ class PlayerGone:
     def __init__ (self, ID, Left):
         self.playerID = ID
         self.playersLeft = Left
-        
+            
 class VirtualCore:
     # ROM = [memSize,processes,threads,clockCount]
-    def __init__(self, memorySize, programs): #returns true for succesfull load, false for not
+    def __init__(self, memorySize, programs):
+        self.tickLimit = -1
+        self.size = memorySize
         self.threadLimit = 32
+        self.ROM = [memorySize-1,0,0,0]
         self.playerCounters = []
+        self.memory = []
+        self.changesList = []
+        
         numberNoOps = memorySize
         for prog in programs:
             numberNoOps -= len(prog)
-        if(numberNoOps < 0):return False
+        if(numberNoOps < 0):return
         nopSizes = [numberNoOps]
         while(len(nopSizes) < len(programs)):
             largest = max(nopSizes)
@@ -30,9 +36,8 @@ class VirtualCore:
             newVal2 = largest-newVal
             nopSizes.append(newVal)
             nopSizes.append(newVal2)
-        self.memory = []
         count = 0
-        numbers = range(0,len(programs)-1)
+        numbers = range(0,len(programs))
         for nopSize in nopSizes:
             if(len(numbers) > 0):
                 randomIndex = numbers.pop(random.randint(0,len(numbers)-1))
@@ -41,11 +46,9 @@ class VirtualCore:
                 count += len(programs[randomIndex])
             self.memory += [Instruction() for j in xrange(nopSize)]
             count += nopSize
-        self.size = memorySize
+        self.modValues()
         self.currentPlayer = 0
-        self.ROM = [memorySize-1,0,0,0]
-        self.changesList = []
-        return True
+        return
     def modValues(self):
         for instruc in self.memory:
             amend = []
@@ -61,6 +64,8 @@ class VirtualCore:
     def tick(self): #will return a PlayerGone object if a player loses. None otherwise.
         if(len(self.playerCounters) == 0):
             return None
+        if(self.ROM[3] == self.tickLimit):
+            return PlayerGone(-1,0)
         self.setROM()
         nextInstructionLocation = self.playerCounters[self.currentPlayer].currentPointer()
         nextInstruction = self.memory[nextInstructionLocation]

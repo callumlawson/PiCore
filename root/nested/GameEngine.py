@@ -44,7 +44,7 @@ class GameEngine(object):
         
         #self.doResize()
         
-    def startGame(self,coreSize,programNames,programPaths):
+    def startGame(self,coreSize,programNames,programPaths, tickLimit):
         self.programNames = programNames
         self.programPaths = programPaths
         programs = []
@@ -56,13 +56,8 @@ class GameEngine(object):
         if not self.errorMessages == []:
             self.gui.open_error_dialog(self.errorMessages)
             self.errorMessages = []
-        self.virtualCore = VirtualCore(coreSize)
-        c = 0
-        for program in programs:
-            pos = int((c*coreSize)/len(programs) + random.randint(0, int(1.5 * len(program))))
-            self.virtualCore.load(pos, program)
-            c +=1
-        self.virtualCore.modValues()      
+        self.virtualCore = VirtualCore(coreSize, programs)
+        self.virtualCore.tickLimit = tickLimit
         self.doResize()
     
     # Pause the game clock    
@@ -162,7 +157,10 @@ class GameEngine(object):
             if not self.clock.paused and self.virtualCore != None: 
                 ret = self.virtualCore.tick()
                 if(ret != None): #player out
-                    print "Player " + str(ret.playerID) + " who loaded " + self.programNames[ret.playerID] + " lost. There are " + str(ret.playersLeft) + " players remaining"
+                    if(ret.playerID != -1):
+                        print "Player " + str(ret.playerID) + " who loaded " + self.programNames[ret.playerID] + " lost. There are " + str(ret.playersLeft) + " players remaining"
+                    else:
+                        print "Time Up"
                     
             #Poll for events and render the screen AFAP until time for next tick
             while (not done) and ((self.clock.get_time() - startTime) < 0.1):   
