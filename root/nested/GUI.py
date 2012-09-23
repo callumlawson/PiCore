@@ -231,8 +231,6 @@ class MainGui(gui.Desktop):
         
         speedSelTable.tr()
         speedSelTable.td(timeLabel)
-        
-        slider = gui.HSlider(value=self.sliderValue,min=0,max=100,size=20,height=16,width=120)
 
         def update_speed():
             self.sliderValue = slider.value
@@ -240,6 +238,15 @@ class MainGui(gui.Desktop):
                 self.engine.clock.set_speed(self.sliderValue/10.0)
             else: self.engine.clock.set_speed(10000)
             
+        def update_size():
+            pass
+        
+        coreSizeSelector = gui.Select()
+        coreSizeSelector.add("2000",1000)
+        coreSizeSelector.add("5000",5000)
+        coreSizeSelector.add("10000",10000)
+        
+        slider = gui.HSlider(value=self.sliderValue,min=0,max=100,size=20,height=16,width=120)
         slider.connect(gui.CHANGE, update_speed)
 
         speedSelTable.tr()
