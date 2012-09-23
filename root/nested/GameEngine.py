@@ -40,7 +40,7 @@ class GameEngine(object):
         
         self.rect = self.gui.get_render_area()
         
-        self.startGame(self.initCoreSize, [], [])
+        self.startGame(self.initCoreSize, [], [], 0)
         
         #self.doResize()
         
