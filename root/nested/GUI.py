@@ -264,7 +264,7 @@ class MainGui(gui.Desktop):
             self.sliderValue = slider.value
             if slider.value != 100:
                 self.engine.clock.set_speed(self.sliderValue/10.0)
-            else: self.engine.clock.set_speed(10000000)
+            else: self.engine.clock.set_speed(10000)
             
         def update_core_size():
             self.coreSize = int(coreSizeInput.value)

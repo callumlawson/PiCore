@@ -204,7 +204,42 @@ class GameEngine(object):
                         print "Player " + str(ret.playerID) + " who loaded " + self.programNames[ret.playerID] + " lost. There are " + str(ret.playersLeft) + " players remaining"
                     else:
                         print "Time Up"
+            
+            #Will put this in its own method! Was experimenting! Do not delete!      
+            for event in pygame.event.get():
+                    if (event.type == pygame.QUIT or 
+                        event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                        done = True 
+                    if event.type == pygame.VIDEORESIZE:
+                        self.display = pygame.display.set_mode(event.dict['size'],pygame.RESIZABLE)
+                        self.drawArea = pygame.Surface(event.dict['size']).convert_alpha()
+                        self.screenWidth = event.dict['size'][0]
+                        self.screenHeight = event.dict['size'][1]
+                        self.gui.updateSize(event.dict['size'])#TODO rewrite so menu is fixed height
+                        pygame.display.update()
+                        print self.screenWidth,self.screenHeight
+                        self.gui.event(event)
+                        self.doResize()
+                    else:
+                        # Pass the event off to pgu
+                        self.gui.event(event)
                     
+            self.rect = self.gui.get_render_area()              
+            # Render the game
+            updates = []
+            self.display.set_clip(self.rect)
+            lst = self.partRender()
+            if (lst):
+                updates += lst
+                
+            self.display.set_clip()
+            
+            # Give pgu a chance to update the display (menu)
+            lst = self.gui.update()
+            if (lst):
+                updates += lst
+            pygame.display.update(updates)    
+                
             #Poll for events and render the screen AFAP until time for next tick
             while (not done) and ((self.clock.get_time() - startTime) < 0.1):   
                 # Process events
