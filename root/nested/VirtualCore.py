@@ -122,6 +122,10 @@ class VirtualCore:
             else:
                 self.playerCounters[self.currentPlayer].advanceBoth()
                 
+        elif(instruction.name == "mth"):
+            
+        elif(instruction.name == "lth"):
+                    
         elif(instruction.name == "bch"): # new thread?
             destination = self.getLocation(instruction.arguments[0], instructionLocation)
             if(destination == -1):
@@ -130,7 +134,8 @@ class VirtualCore:
             if(len(self.playerCounters[self.currentPlayer].counters) != self.threadLimit):
                 self.playerCounters[self.currentPlayer].spawnThread(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
-            
+
+                
         return False
     
     def mathOperation(self, instruction, instructionLocation, op):

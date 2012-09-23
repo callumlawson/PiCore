@@ -1,0 +1,9 @@
+distance= 333
+lengthOfProgram= 7
+start: mov @0 #dest
+jpi @moveOn @-1 (lengthOfProgram-1)
+dest: add distance 1 @0
+add @start 1 @start
+jmp @start
+moveOn: sub @(distance-3) 2 @(distance-3)
+jmp @(distance-6)
