@@ -32,6 +32,32 @@ class DrawingArea(gui.Widget): #render the gameState
         pygameDisplay = pygame.display.get_surface()
         self.imageBuffer.blit(pygameDisplay, self.get_abs_rect())
         
+class AboutDialog(gui.Dialog):
+    
+    def __init__(self,**params):
+        title = gui.Label("About PiCore")
+        
+        width = 400
+        height = 200
+        doc = gui.Document(width=width)
+        
+        space = title.style.font.size(" ")
+        
+        doc.block(align=0)
+        for word in """PiCore v0.8 by Callum Lawson and Lawrence Esswood""".split(" "): 
+            doc.add(gui.Label(word))
+            doc.space(space)
+        doc.br(space[1])
+        
+        doc.block(align=0)
+        for word in """A reincarnation of Corewars for the Raspberry Pi and other platforms.""".split(" "): 
+            doc.add(gui.Label(word))
+            doc.space(space)
+        doc.br(space[1])
+        
+        gui.Dialog.__init__(self,title,doc)
+##
+        
 class ErrorDialog(gui.Dialog):
     
     def __init__(self,errorMessages):
@@ -215,14 +241,16 @@ class MainGui(gui.Desktop):
         table.tr()
        
         # Add a button for pausing / resuming the game clock
-        def pause_cb():
+        def pause():
             if (self.engine.clock.paused):
                 self.engine.resume()
+                pauseResumeBtn.value = "Pause"
             else:
                 self.engine.pause()
+                pauseResumeBtn.value = "Resume"
 
-        pauseResumeBtn = gui.Button("Pause/Resume Processor Clock", height=50)
-        pauseResumeBtn.connect(gui.CLICK, pause_cb)
+        pauseResumeBtn = gui.Button("Pause", height=50)
+        pauseResumeBtn.connect(gui.CLICK, pause)
        
         # Add a slider for adjusting the game clock speed
         speedSelTable = gui.Table()
@@ -236,15 +264,22 @@ class MainGui(gui.Desktop):
             self.sliderValue = slider.value
             if slider.value != 100:
                 self.engine.clock.set_speed(self.sliderValue/10.0)
-            else: self.engine.clock.set_speed(10000)
+            else: self.engine.clock.set_speed(10000000)
             
-        def update_size():
-            pass
+        def update_core_size():
+            self.coreSize = int(coreSizeInput.value)
+            
+        def update_tick_limit():
+            pass #TODO
         
-        coreSizeSelector = gui.Select()
-        coreSizeSelector.add("2000",1000)
-        coreSizeSelector.add("5000",5000)
-        coreSizeSelector.add("10000",10000)
+        def start_test(arg):
+            pass #TODO
+        
+        coreSizeLabel = gui.Label("Core Size:")
+        coreSizeInput = gui.Input(value = 3000 ,size = 5)
+        
+        tickLimitLabel = gui.Label("Tick Limit:")
+        tickLimitInput = gui.Input(value = 10000, size = 5)
         
         slider = gui.HSlider(value=self.sliderValue,min=0,max=100,size=20,height=16,width=120)
         slider.connect(gui.CHANGE, update_speed)
@@ -253,22 +288,46 @@ class MainGui(gui.Desktop):
         speedSelTable.td(slider)
         
         #Program selector button
+        aboutDialog = AboutDialog()
         programSelectorDialog = ProgramSelector(self)
       
         loadProgsBtn = gui.Button("Load Programs", height=50)
         loadProgsBtn.connect(gui.CLICK,programSelectorDialog.open,None)
         
+        testProgsBtn = gui.Button("Test Programs", height=50)
+        testProgsBtn.connect(gui.CLICK,start_test,None)
+        
+        aboutBtn = gui.Button("About",height=50)
+        aboutBtn.connect(gui.CLICK,aboutDialog.open,None)
+        
         def start_sim(arg):
+            update_core_size()
+            update_tick_limit()
             self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
             
         startBtn = gui.Button("Start", height=50)
         startBtn.connect(gui.CLICK,start_sim,None)
         
-        #table.td(loadFileTable)
+        settingsTable = gui.Table()
+        
         table.td(startBtn, height=50)
-        table.td(loadProgsBtn)
+       
         table.td(pauseResumeBtn)
         table.td(speedSelTable)
+        
+        settingsTable.td(coreSizeLabel,col = 0, row = 0)
+        settingsTable.td(coreSizeInput,col = 1, row = 0)
+    
+        settingsTable.td(tickLimitLabel,col = 0, row = 1)
+        settingsTable.td(tickLimitInput,col = 1, row = 1)
+        
+        table.td(settingsTable)
+        
+        table.td(loadProgsBtn)
+        
+        table.td(testProgsBtn)
+        
+        table.td(aboutBtn)
         
         self.menuArea.add(table, 0, 0)
         

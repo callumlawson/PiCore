@@ -20,7 +20,7 @@ class GameEngine(object):
     colors = (pygame.Color(255,0,0),pygame.Color(0,255,0),pygame.Color(0,0,255),pygame.Color(0,255,255),pygame.Color(255,255,0),pygame.Color(255,0,255))
     
     def __init__(self, pygameDisplay):
-        self.initCoreSize = 3016
+        self.initCoreSize = 3000
         self.programNames = []   
         self.menuHeight = 70
         self.infoHeight = 30
