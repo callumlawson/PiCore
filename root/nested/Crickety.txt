@@ -1,0 +1,7 @@
+start: mov @0 #dest
+jpi @moveOn @-1 6
+dest: add 333 1 @0
+add @start 1 @start
+jmp @start
+moveOn: sub @330 2 @330
+jmp @327

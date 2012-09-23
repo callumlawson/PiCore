@@ -1,0 +1,17 @@
+jmp @3
+/length is 14
+start: mov 33 @-1
+jmp @-1
+bch @-2
+mov @bomb @200 /bomb an imp
+bch @199 /set it off
+copy: mov @start #to
+jpi @moveOn @copy 9 /if longer add
+add @copy 1 @copy
+to: add 190 1 @0
+jmp @copy
+moveOn: sub @190 5 @190 /if longer add
+sub @192 8 @192 /if loger add
+mov 77 @start
+jmp @184
+bomb: mov @0 @1

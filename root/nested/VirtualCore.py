@@ -127,7 +127,7 @@ class VirtualCore:
             if(destination == -1):
                     return self.playerCounters[self.currentPlayer].killCurrentPointer()
             self.playerCounters[self.currentPlayer].advancePointer()
-            if(len(self.playerCounters[self.currentPlayer].counters) == self.threadLimit):
+            if(len(self.playerCounters[self.currentPlayer].counters) != self.threadLimit):
                 self.playerCounters[self.currentPlayer].spawnThread(destination)
             self.playerCounters[self.currentPlayer].advanceThread()
             
