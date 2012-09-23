@@ -4,6 +4,7 @@ Created on 7 Sep 2012
 @author: Callum Lawson
 '''
 import math
+import random
 from Instruction import Instruction
 from PlayerProgramCounter import PlayerProgramCounter
     
@@ -14,20 +15,37 @@ class PlayerGone:
         
 class VirtualCore:
     # ROM = [memSize,processes,threads,clockCount]
-    def __init__(self, memorySize):
+    def __init__(self, memorySize, programs): #returns true for succesfull load, false for not
         self.threadLimit = 32
         self.playerCounters = []
-        self.IDcount = 0
-        self.memory = [Instruction() for j in range(memorySize)]
+        numberNoOps = memorySize
+        for prog in programs:
+            numberNoOps -= len(prog)
+        if(numberNoOps < 0):return False
+        nopSizes = [numberNoOps]
+        while(len(nopSizes) < len(programs)):
+            largest = max(nopSizes)
+            nopSizes.remove(largest)
+            newVal = random.randint(0,largest)
+            newVal2 = largest-newVal
+            nopSizes.append(newVal)
+            nopSizes.append(newVal2)
+        self.memory = []
+        count = 0
+        numbers = range(0,len(programs)-1)
+        for nopSize in nopSizes:
+            if(len(numbers) > 0):
+                randomIndex = numbers.pop(random.randint(0,len(numbers)-1))
+                self.memory +=programs[randomIndex]
+                self.playerCounters.append(PlayerProgramCounter(self, randomIndex, count))
+                count += len(programs[randomIndex])
+            self.memory += [Instruction() for j in xrange(nopSize)]
+            count += nopSize
         self.size = memorySize
         self.currentPlayer = 0
         self.ROM = [memorySize-1,0,0,0]
         self.changesList = []
-    def load(self, position, code):
-        codeLength = len(code)
-        self.memory = self.memory[0:position] + code + self.memory[(position + codeLength):]
-        self.playerCounters.append(PlayerProgramCounter(self, self.IDcount,position))
-        self.IDcount +=1
+        return True
     def modValues(self):
         for instruc in self.memory:
             amend = []
@@ -123,9 +141,11 @@ class VirtualCore:
                 self.playerCounters[self.currentPlayer].advanceBoth()
                 
         elif(instruction.name == "mth"):
-            
+            return self.mathOperation(instruction, instructionLocation, self.moreThanOperation) 
+        
         elif(instruction.name == "lth"):
-                    
+            return self.mathOperation(instruction, instructionLocation, self.lessThanOperation)
+                
         elif(instruction.name == "bch"): # new thread?
             destination = self.getLocation(instruction.arguments[0], instructionLocation)
             if(destination == -1):
@@ -166,6 +186,10 @@ class VirtualCore:
         return self.boolToInt((op1 != 0) != (op2 != 0))
     def nandOperation(self, op1, op2):
         return self.boolToInt((op1 == 0) and (op2 == 0))
+    def lessThanOperation(self, op1, op2):
+        return self.boolToInt((op1 == 0) < (op2 == 0))
+    def moreThanOperation(self, op1, op2):
+        return self.boolToInt((op1 == 0) > (op2 == 0))
     def getInstruction(self, argumentTuple, relativePoint): #returns the instruction in the relevent location (or makes the pseudo data for literals)
         if(argumentTuple[0] == "$"):
             return Instruction("dat", [("",self.ROM[int(argumentTuple[1])])])
@@ -174,8 +198,7 @@ class VirtualCore:
             return Instruction("dat", [argumentTuple])
         return self.memory[atLocation]
     def boolToInt(self, aBool):
-        if(aBool):
-            return 1
+        if(aBool):return 1
         return 0        
     def getLocation(self, argumentTuple, relativePoint): #return -1 if not valid
         loc = -1
