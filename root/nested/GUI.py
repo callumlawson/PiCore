@@ -270,7 +270,7 @@ class MainGui(gui.Desktop):
             self.coreSize = int(coreSizeInput.value)
             
         def update_tick_limit():
-            pass #TODO
+            self.tickLimit = int(tickLimitInput.value)
         
         def start_test(arg):
             pass #TODO
@@ -303,7 +303,7 @@ class MainGui(gui.Desktop):
         def start_sim(arg):
             update_core_size()
             update_tick_limit()
-            self.engine.startGame(self.coreSize,self.programNames,self.programPaths)
+            self.engine.startGame(self.coreSize,self.programNames,self.programPaths,self.tickLimit)
             
         startBtn = gui.Button("Start", height=50)
         startBtn.connect(gui.CLICK,start_sim,None)
