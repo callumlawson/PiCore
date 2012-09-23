@@ -273,7 +273,7 @@ class MainGui(gui.Desktop):
             self.tickLimit = int(tickLimitInput.value)
         
         def start_test(arg):
-            pass #TODO
+            self.engine.testTwo(self.programNames,self.programPaths)
         
         coreSizeLabel = gui.Label("Core Size:")
         coreSizeInput = gui.Input(value = 3000 ,size = 5)

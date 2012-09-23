@@ -59,6 +59,7 @@ class GameEngine(object):
         self.virtualCore = VirtualCore(coreSize, programs)
         self.virtualCore.tickLimit = tickLimit
         self.doResize()
+        
     def testTwo(self,programNames,programPaths): #-1 = error. 0 = draw. 1 = player1Wins. 2 = player2Wins
         numberOfTrys = 3
         sizes = [256,1024,4096]
@@ -103,6 +104,7 @@ class GameEngine(object):
         if(aPoints == bPoints): return 0
         if(aPoints > bPoints): return 1
         if(aPoints < bPoints): return 2
+        
     # Pause the game clock    
     def pause(self):
         print "pause"
