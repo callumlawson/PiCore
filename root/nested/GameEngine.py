@@ -59,7 +59,50 @@ class GameEngine(object):
         self.virtualCore = VirtualCore(coreSize, programs)
         self.virtualCore.tickLimit = tickLimit
         self.doResize()
-    
+    def testTwo(self,programNames,programPaths): #-1 = error. 0 = draw. 1 = player1Wins. 2 = player2Wins
+        numberOfTrys = 3
+        sizes = [256,1024,4096]
+        sizeVariance = 8
+        maxProgSize = 64
+        if(len(programNames) != 2):
+            self.gui.open_error_dialog(["Wrong number of programs for official test. Must be 2."])
+            return -1
+        programs = []
+        parser = Parser(self)
+        for path in self.programPaths:
+            program = parser.processFile(path)
+            if not program == False:
+                if(len(program) > maxProgSize):
+                    self.gui.open_error_dialog(["A program was too long. Limit is " + str(maxProgSize) + "lines."])
+                    return -1
+                programs.append(program)
+        if not self.errorMessages == []:
+            self.gui.open_error_dialog(self.errorMessages)
+            self.errorMessages = []
+            return -1
+        #comp time
+        for j in range(len(sizes)):
+            sizes[j] += random.randint(-sizeVariance,sizeVariance)
+        aPoints = 0
+        bPoints = 0
+        for size in sizes:
+            for x in range(numberOfTrys):
+                coreGame = VirtualCore(size,programs, False)
+                coreGame.tickLimit = size * 6
+                while(True):
+                    state = coreGame.tick()
+                    if(state != None): #player out
+                        if(state.playerID != -1):
+                            print "Player " + str(state.playerID) + " who loaded " + programNames[state.playerID] + " lost. There are " + str(state.playersLeft) + " players remaining"
+                            if(state.playerID == 0): bPoints +=1
+                            if(state.playerID == 1): aPoints +=1
+                            break
+                        else:
+                            print "Time Up"
+                            break
+        if(aPoints == bPoints): return 0
+        if(aPoints > bPoints): return 1
+        if(aPoints < bPoints): return 2
     # Pause the game clock    
     def pause(self):
         print "pause"

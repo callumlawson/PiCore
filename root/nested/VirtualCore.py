@@ -15,7 +15,8 @@ class PlayerGone:
             
 class VirtualCore:
     # ROM = [memSize,processes,threads,clockCount]
-    def __init__(self, memorySize, programs):
+    def __init__(self, memorySize, programs, doRender = True):
+        self.doRender = doRender
         self.tickLimit = -1
         self.size = memorySize
         self.threadLimit = 32
@@ -81,8 +82,9 @@ class VirtualCore:
         return None
         
     def execute(self, instruction, instructionLocation):   #will return true if the player has lost his last thread
-        instruction.lastMod = self.playerCounters[self.currentPlayer].ID
-        self.changesList.append(instructionLocation)
+        if(self.doRender):
+            instruction.lastMod = self.playerCounters[self.currentPlayer].ID
+            self.changesList.append(instructionLocation)
         if(instruction.name == "nop"): #do nothing. Duh
             self.playerCounters[self.currentPlayer].advanceBoth()
             
@@ -215,8 +217,9 @@ class VirtualCore:
             loc = (int(self.memory[(int(argumentTuple[1]) + relativePoint)%self.size].arguments[0][1]) + relativePoint)%self.size
         elif(argumentTuple[0] == "$"):
             return -1
-        self.memory[loc].lastMod = self.playerCounters[self.currentPlayer].ID
-        self.changesList.append(loc)
+        if(self.doRender):
+            self.memory[loc].lastMod = self.playerCounters[self.currentPlayer].ID
+            self.changesList.append(loc)
         return loc
     def setROM(self):
         self.ROM[3] +=1
